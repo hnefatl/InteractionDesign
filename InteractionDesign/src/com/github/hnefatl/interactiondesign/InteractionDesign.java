@@ -4,6 +4,6 @@ public class InteractionDesign
 {
 	public static void main(String[] args)
 	{
-		return;
+		new IDApp();
 	}
 }
