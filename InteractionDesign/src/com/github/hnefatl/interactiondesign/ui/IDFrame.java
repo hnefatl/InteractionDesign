@@ -3,7 +3,8 @@ package com.github.hnefatl.interactiondesign.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 
 /**
  * 
@@ -18,7 +19,9 @@ public class IDFrame
 	private IDLocationFrame frame;
 	private Map<IDComponent, IDLocationFrame> components;
 	
-	private JPanel panel;
+	private JLayeredPane pane;
+	
+	private Integer nextLayer;
 	
 	public IDFrame()
 	{
@@ -28,14 +31,19 @@ public class IDFrame
 	public IDFrame(IDLocationFrame frame)
 	{
 		this.frame = frame;
-		this.frame.setHasOwnGraphicsContext(true);
+		
+		if (this.frame != null)
+		{
+			this.frame.setHasOwnGraphicsContext(true);
+		}
 		
 		components = new HashMap<IDComponent, IDLocationFrame>();
+		nextLayer = 0;
 		
-		panel = new JPanel();
+		pane = new JLayeredPane();
 		
-		panel.setLayout(null);
-		panel.setOpaque(false);
+		pane.setLayout(null);
+		pane.setOpaque(false);
 	}
 	
 	public IDLocationFrame getFrame()
@@ -49,24 +57,30 @@ public class IDFrame
 		lFrame.setParent(frame);
 		
 		components.put(component, lFrame);
-		panel.add(component.getRaw());
+		pane.add(component.getRaw(), nextLayer);
+		
+		nextLayer += 1;
 		
 		component.repaint(lFrame);
 	}
 	
 	public void removeComponent(IDComponent component)
 	{
-		panel.remove(component.getRaw());
+		pane.remove(component.getRaw());
 		components.remove(component);
 	}
 	
 	public void repaint()
 	{
-		panel.setSize(frame.getActualSize().toRaw());
-		panel.setLocation(frame.getActualOffset().toRaw());
+		if (frame != null)
+		{
+			pane.setSize(frame.getActualSize().toRaw());
+			pane.setLocation(frame.getActualOffset().toRaw());
+		}
 		
 		for (Map.Entry<IDComponent, IDLocationFrame> componentPair : components.entrySet())
 		{
+			componentPair.getValue().setParent(frame);
 			componentPair.getKey().repaint(componentPair.getValue());
 		}
 	}
@@ -75,11 +89,16 @@ public class IDFrame
 	{
 		this.frame = frame;
 		
+		if (this.frame != null)
+		{
+			this.frame.setHasOwnGraphicsContext(true);
+		}
+		
 		repaint();
 	}
 	
-	public JPanel getRaw()
+	public JComponent getRaw()
 	{
-		return panel;
+		return pane;
 	}
 }

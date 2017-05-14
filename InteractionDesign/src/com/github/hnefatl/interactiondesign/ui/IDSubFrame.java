@@ -4,11 +4,16 @@ import javax.swing.JComponent;
 
 public class IDSubFrame extends IDComponent
 {
-	IDFrame frame;
+	private IDFrame frame;
 	
 	public IDSubFrame()
 	{
 		frame = new IDFrame();
+	}
+	
+	public IDFrame get()
+	{
+		return frame;
 	}
 	
 	public JComponent getRaw()
