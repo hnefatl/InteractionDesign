@@ -5,11 +5,13 @@ import com.github.hnefatl.interactiondesign.ui.IDButton;
 import com.github.hnefatl.interactiondesign.ui.IDColour;
 import com.github.hnefatl.interactiondesign.ui.IDEvent;
 import com.github.hnefatl.interactiondesign.ui.IDFrame;
+import com.github.hnefatl.interactiondesign.ui.IDGradientRectangle;
 import com.github.hnefatl.interactiondesign.ui.IDLocation;
 import com.github.hnefatl.interactiondesign.ui.IDLocationFrame;
 import com.github.hnefatl.interactiondesign.ui.IDMainFrame;
 import com.github.hnefatl.interactiondesign.ui.IDPosition;
 import com.github.hnefatl.interactiondesign.ui.IDRectangle;
+import com.github.hnefatl.interactiondesign.ui.IDScrollFrame;
 import com.github.hnefatl.interactiondesign.ui.IDSize;
 import com.github.hnefatl.interactiondesign.ui.IDString;
 import com.github.hnefatl.interactiondesign.ui.IDSubFrame;
@@ -17,6 +19,8 @@ import com.github.hnefatl.interactiondesign.ui.IDSubFrame;
 public class IDApp
 {
 	private IDMainFrame mainFrame;
+	
+	private IDScrollFrame scrollFrame;
 	
 	private static final IDColour bgColour = new IDColour(1.0, 1.0, 1.0);
 	private static final IDColour sbColour = new IDColour(0.2, 0.2, 0.2);
@@ -59,6 +63,7 @@ public class IDApp
 		// Create menu bar
 		
 		rootFrame.addComponent(constructMenuBar(), new IDLocation(noOffset, new IDSize(1242, 132)));
+		rootFrame.addComponent(constructScrollFrame(), new IDLocation(new IDPosition(0, 132), new IDSize(1242, 2016)));
 		
 		return rootFrame;
 	}
@@ -88,6 +93,15 @@ public class IDApp
 		return menuBar;
 	}
 	
+	private IDScrollFrame constructScrollFrame()
+	{
+		scrollFrame = new IDScrollFrame();
+		
+		scrollFrame.addComponent(new IDGradientRectangle(new IDColour(0xFF, 0xFF, 0xFF), new IDColour(0xC8, 0xA2, 0xC8)), new IDLocation(noOffset, new IDSize(1242, 4000)));
+		
+		return scrollFrame;
+	}
+	
 	private IDFrame constructModalBackgroundFrame()
 	{
 		IDFrame modalBackgroundFrame = new IDFrame(new IDLocationFrame(dfLocation, dfScale));
@@ -109,6 +123,7 @@ public class IDApp
 		IDFrame modalFrame = new IDFrame(new IDLocationFrame(dfLocation, dfScale));
 		
 		modalFrame.addComponent(new IDRectangle(new IDColour(1.0, 1.0, 1.0)), new IDLocation(new IDPosition(0, 574), new IDSize(1242, 1000)));
+		modalFrame.addComponent(new IDButton(false), new IDLocation(new IDPosition(0, 574), new IDSize(1242, 1000)));
 		
 		return modalFrame;
 	}

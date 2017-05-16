@@ -5,13 +5,11 @@ import javax.swing.JPanel;
 
 public class IDRectangle extends IDComponent
 {
-	JPanel panel;
-	IDColour colour;
+	private JPanel panel;
 	
 	public IDRectangle(IDColour colour)
 	{
 		panel = new JPanel();
-		this.colour = colour;
 		
 		panel.setBackground(colour.toColor());
 	}

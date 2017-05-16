@@ -53,6 +53,11 @@ public class IDLocationFrame
 		return frameLocation.getSize();
 	}
 	
+	public double getScale()
+	{
+		return scale;
+	}
+	
 	public IDPosition getActualOffset()
 	{
 		return (parentFrame != null) ? parentFrame.resolveAbsoluteOffset(frameLocation.getOffset()) : frameLocation.getOffset();
