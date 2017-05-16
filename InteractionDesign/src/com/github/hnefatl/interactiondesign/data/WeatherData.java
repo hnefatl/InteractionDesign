@@ -40,12 +40,16 @@ public class WeatherData
 	
 	public static WeatherData getWeather()
 	{
+<<<<<<< HEAD
 		/*
 		OpenWeatherMap owm = new OpenWeatherMap(Units.METRIC, API_KEY);
 		WeatherData data = new WeatherData();
 		
 		return data;
 		*/
+=======
+		OpenWeatherMap owm = new OpenWeatherMap("");
+>>>>>>> 6c83d1388d60f578cb32d85ea6185fbee854ce19
 		
 		return null;
 	}

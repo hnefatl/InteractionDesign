@@ -88,7 +88,7 @@ public class IDApp
 				
 				mainFrame.setModal(constructDefaultModal());
 			}
-		}), new IDLocation(new IDPosition(-(24 + 132), 0), new IDSize(132, 132)));
+		}), new IDLocation(new IDPosition(1242 - (24 + 132), 0), new IDSize(132, 132)));
 		
 		return menuBar;
 	}

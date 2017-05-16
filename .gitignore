@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .settings
 .classpath
 .project
@@ -5,6 +6,13 @@
 .settings/*
 .classpath/*
 .project/*
+=======
+.metadata
+.settings
+
+.metadata/*
+.settings/*
+>>>>>>> 6c83d1388d60f578cb32d85ea6185fbee854ce19
 
 build/
 build/*
