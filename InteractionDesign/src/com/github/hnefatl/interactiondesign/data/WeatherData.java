@@ -34,9 +34,8 @@ public class WeatherData
 			tempMax = weather.getMainInstance().getMaxTemperature();
 		}
 		
-		if (hasRain)
-			rain = weather.getRainInstance().getRain();
-
+		//if (hasRain)
+			//rain = weather.getRainInstance().getRain();
 	}
 	
 	public static WeatherData getWeather()
