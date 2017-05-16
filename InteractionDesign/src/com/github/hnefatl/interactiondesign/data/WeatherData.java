@@ -1,4 +1,4 @@
-package uk.ac.cam.InteractionDesign.data;
+package com.github.hnefatl.interactiondesign.data;
 
 import net.aksingh.owmjapis.*;
 
