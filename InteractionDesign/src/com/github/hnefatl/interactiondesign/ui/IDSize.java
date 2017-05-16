@@ -4,6 +4,8 @@ import java.awt.Dimension;
 
 public class IDSize
 {
+	public static final IDSize ZERO = new IDSize(0, 0);
+	
 	public double x;
 	public double y;
 	

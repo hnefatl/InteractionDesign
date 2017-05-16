@@ -4,6 +4,8 @@ import java.awt.Point;
 
 public class IDPosition
 {
+	public static final IDPosition ZERO = new IDPosition(0, 0);
+	
 	public double x;
 	public double y;
 	

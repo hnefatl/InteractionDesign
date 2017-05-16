@@ -60,8 +60,6 @@ public class IDScrollFrame extends IDComponent
 			public void mousePressed(MouseEvent e)
 			{
 				cursorPosition = e.getPoint();
-				
-				System.out.println("MP: " + cursorPosition.x + " " + cursorPosition.y);
 			}
 		});
 		
@@ -73,8 +71,6 @@ public class IDScrollFrame extends IDComponent
 				
 				int dx = e.getX() - cursorPosition.x;
 				int dy = e.getY() - cursorPosition.y;
-				
-				System.out.println("MD: " + dx + " " + dy);
 				
 				currentPosition.x -= (dx * sensitivity);
 				currentPosition.y -= (dy * sensitivity);
@@ -221,15 +217,11 @@ public class IDScrollFrame extends IDComponent
 		{
 			if (currentPosition.y < minY)
 			{
-				System.out.println("Y Underflow: " + currentPosition.y + " " + minY);
-				
 				currentPosition.y = minY;
 			}
 			
 			else if (currentPosition.y > (maxY - ySize))
 			{
-				System.out.println("Y Overflow: " + currentPosition.y + " " + (maxY - ySize));
-				
 				currentPosition.y = (maxY - ySize);
 			}
 		}
@@ -259,8 +251,6 @@ public class IDScrollFrame extends IDComponent
 			IDPosition lOffset = lFrame.getOffset();
 			
 			IDPosition tempOffset = new IDPosition(lOffset.x + xOff, lOffset.y + yOff);
-			
-			System.out.println("TO: " + tempOffset.x + " " + tempOffset.y);
 			
 			IDLocationFrame tempFrame = new IDLocationFrame(new IDLocation(tempOffset, lFrame.getSize()), lFrame.getScale());
 			tempFrame.setParent(frame);

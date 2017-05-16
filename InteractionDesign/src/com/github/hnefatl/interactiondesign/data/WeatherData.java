@@ -2,6 +2,7 @@ package com.github.hnefatl.interactiondesign.data;
 
 import net.aksingh.owmjapis.*;
 
+@SuppressWarnings("unused")
 public class WeatherData
 {
 	private boolean hasTemp;
