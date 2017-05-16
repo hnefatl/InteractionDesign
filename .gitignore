@@ -1,12 +1,10 @@
-.metadata
+.settings
 .classpath
 .project
-.settings
 
-.metadata/*
+.settings/*
 .classpath/*
 .project/*
-.settings/*
 
 build/
 build/*

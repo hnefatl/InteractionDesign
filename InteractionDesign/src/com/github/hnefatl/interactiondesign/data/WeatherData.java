@@ -1,9 +1,12 @@
 package com.github.hnefatl.interactiondesign.data;
 
 import net.aksingh.owmjapis.*;
+import net.aksingh.owmjapis.OpenWeatherMap.Units;
 
 public class WeatherData
 {
+	private static String API_KEY = "0542e64ec65d5312dd38db40e0b2f2f5";	
+	
 	private boolean hasTemp;
 	private float temp;
 	
@@ -37,6 +40,13 @@ public class WeatherData
 	
 	public static WeatherData getWeather()
 	{
-		OpenWeatherMap owm = new OpenWeatherMap("");
+		/*
+		OpenWeatherMap owm = new OpenWeatherMap(Units.METRIC, API_KEY);
+		WeatherData data = new WeatherData();
+		
+		return data;
+		*/
+		
+		return null;
 	}
 }
