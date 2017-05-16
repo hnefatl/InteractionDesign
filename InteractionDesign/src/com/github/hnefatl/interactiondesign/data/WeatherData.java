@@ -38,5 +38,7 @@ public class WeatherData
 	public static WeatherData getWeather()
 	{
 		OpenWeatherMap owm = new OpenWeatherMap("");
+		
+		return null;
 	}
 }
