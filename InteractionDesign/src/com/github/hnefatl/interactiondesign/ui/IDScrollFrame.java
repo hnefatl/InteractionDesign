@@ -60,6 +60,8 @@ public class IDScrollFrame extends IDComponent
 			public void mousePressed(MouseEvent e)
 			{
 				cursorPosition = e.getPoint();
+				
+				System.out.println("MP: " + cursorPosition.x + " " + cursorPosition.y);
 			}
 		});
 		
@@ -67,11 +69,15 @@ public class IDScrollFrame extends IDComponent
 			@Override
 			public void mouseDragged(MouseEvent e)
 			{
+				double sensitivity = 3.0;
+				
 				int dx = e.getX() - cursorPosition.x;
 				int dy = e.getY() - cursorPosition.y;
 				
-				currentPosition.x += dx;
-				currentPosition.y += dy;
+				System.out.println("MD: " + dx + " " + dy);
+				
+				currentPosition.x -= (dx * sensitivity);
+				currentPosition.y -= (dy * sensitivity);
 				
 				cursorPosition = e.getPoint();
 				
@@ -82,6 +88,12 @@ public class IDScrollFrame extends IDComponent
 		
 		pane.add(dragPanel, nextLayer);
 		nextLayer++;
+		
+		if (frame != null)
+		{
+			dragPanel.setSize(frame.getActualSize().toRaw());
+			dragPanel.setLocation(new Point(0, 0));
+		}
 		
 		currentPosition = new IDPosition(0, 0);
 		
@@ -196,7 +208,7 @@ public class IDScrollFrame extends IDComponent
 			
 			else if (currentPosition.x > (maxX - xSize))
 			{
-				currentPosition.x = maxX - xSize;
+				currentPosition.x = (maxX - xSize);
 			}
 		}
 		
@@ -209,12 +221,16 @@ public class IDScrollFrame extends IDComponent
 		{
 			if (currentPosition.y < minY)
 			{
+				System.out.println("Y Underflow: " + currentPosition.y + " " + minY);
+				
 				currentPosition.y = minY;
 			}
 			
 			else if (currentPosition.y > (maxY - ySize))
 			{
-				currentPosition.y = maxY - ySize;
+				System.out.println("Y Overflow: " + currentPosition.y + " " + (maxY - ySize));
+				
+				currentPosition.y = (maxY - ySize);
 			}
 		}
 	}
@@ -234,17 +250,22 @@ public class IDScrollFrame extends IDComponent
 		pane.setSize(frame.getActualSize().toRaw());
 		pane.setLocation(frame.getActualOffset().toRaw());
 		
+		double xOff = -currentPosition.x * frame.getScale();
+		double yOff = -currentPosition.y * frame.getScale();
+		
 		for (Map.Entry<IDComponent, IDLocationFrame> componentPair : components.entrySet())
 		{
 			IDLocationFrame lFrame = componentPair.getValue();
 			IDPosition lOffset = lFrame.getOffset();
 			
-			IDPosition tempOffset = new IDPosition(lOffset.x + currentPosition.x, lOffset.y + currentPosition.y);
+			IDPosition tempOffset = new IDPosition(lOffset.x + xOff, lOffset.y + yOff);
+			
+			System.out.println("TO: " + tempOffset.x + " " + tempOffset.y);
 			
 			IDLocationFrame tempFrame = new IDLocationFrame(new IDLocation(tempOffset, lFrame.getSize()), lFrame.getScale());
 			tempFrame.setParent(frame);
 			
-			componentPair.getKey().repaint(componentPair.getValue());
+			componentPair.getKey().repaint(tempFrame);
 		}
 	}
 	
@@ -255,6 +276,9 @@ public class IDScrollFrame extends IDComponent
 		if (this.frame != null)
 		{
 			this.frame.setHasOwnGraphicsContext(true);
+			
+			dragPanel.setSize(frame.getActualSize().toRaw());
+			dragPanel.setLocation(new Point(0, 0));
 		}
 		
 		repaint();

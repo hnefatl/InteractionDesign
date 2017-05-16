@@ -54,5 +54,8 @@ public class IDGradientRectangle extends IDComponent
 	{
 		panel.setSize(frame.getActualSize().toRaw());
 		panel.setLocation(frame.getActualOffset().toRaw());
+		
+		System.out.println(panel.getSize());
+		System.out.println(panel.getLocation());
 	}
 }

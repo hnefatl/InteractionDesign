@@ -83,8 +83,11 @@ public class IDLocationFrame
 	
 	private IDPosition resolveScaledOffset(IDPosition position)
 	{
-		double localX = (position.x >= 0) ? position.x : (getWidth() + position.x);
-		double localY = (position.y >= 0) ? position.y : (getHeight() + position.y);
+		//double localX = (position.x >= 0) ? position.x : (getWidth() + position.x);
+		//double localY = (position.y >= 0) ? position.y : (getHeight() + position.y);
+		
+		double localX = position.x;
+		double localY = position.y;
 		
 		IDPosition scaledPosition = new IDPosition(localX / scale, localY / scale);
 		
@@ -98,8 +101,11 @@ public class IDLocationFrame
 			return resolveScaledOffset(position);
 		}
 		
-		double localX = (position.x >= 0) ? position.x : (getWidth() + position.x);
-		double localY = (position.y >= 0) ? position.y : (getHeight() + position.y);
+		//double localX = (position.x >= 0) ? position.x : (getWidth() + position.x);
+		//double localY = (position.y >= 0) ? position.y : (getHeight() + position.y);
+		
+		double localX = position.x;
+		double localY = position.y;
 		
 		double scaledX = frameLocation.getOffset().x + (localX / scale);
 		double scaledY = frameLocation.getOffset().y + (localY / scale);
@@ -116,8 +122,11 @@ public class IDLocationFrame
 	
 	public IDSize resolveAbsoluteSize(IDSize size)
 	{
-		double localX = (size.x >= 0) ? size.x : (frameLocation.getSize().x + size.x);
-		double localY = (size.y >= 0) ? size.y : (frameLocation.getSize().y + size.y);
+		//double localX = (size.x >= 0) ? size.x : (frameLocation.getSize().x + size.x);
+		//double localY = (size.y >= 0) ? size.y : (frameLocation.getSize().y + size.y);
+		
+		double localX = size.x;
+		double localY = size.y;
 		
 		IDSize scaledSize = new IDSize(localX / scale, localY / scale);
 		
