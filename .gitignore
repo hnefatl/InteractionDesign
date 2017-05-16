@@ -1,11 +1,7 @@
 .metadata
-.classpath
-.project
 .settings
 
 .metadata/*
-.classpath/*
-.project/*
 .settings/*
 
 build/
