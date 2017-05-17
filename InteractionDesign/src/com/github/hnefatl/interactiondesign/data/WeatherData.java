@@ -35,7 +35,7 @@ public class WeatherData
 		}
 		
 		if (hasRain)
-			rain = weather.getRainInstance().getRain();
+			rain = weather.getRainInstance().getRain1h();
 
 	}
 	
