@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -15,28 +16,33 @@ public class City
 {
 	// URl of the OpenWeatherMap list of cities and associated info
 	private static final String CITYLIST_URL = "http://openweathermap.org/help/city_list.txt";
+	// Regex pattern for extracting the country code/country name pairs from the above file
+	private static final String CITYLIST_PATTERN = "\\t+|\\n+|\\r+";
+	
+	// URL of the 3rd party resource holding a map from country code to country name
 	private static final String COUNTRYCODE_URL = "https://gist.githubusercontent.com/marijn/396531/raw/5007a42db72636a9eee6efcb115fbfe348ff45ee/countries.txt";
+	// Regex pattern for extracting the country code/country name pairs from the above file
+	private static final String COUNTRYCODE_PATTERN = "\\n+|\\r+|\\|+";
 	
 	private static List<City> cities = new ArrayList<>();
-	private Map<String, String> codeCountryMap = new HashMap<>();
-	private Map<String, String> countryCodeMap = new HashMap<>();
+	private static Map<String, String> countryCodeNameMap = new HashMap<>();
 	
-	private int cityId;
-	private String name;
-	private int lat;
-	private int lon;
+	private long cityId;
+	private String cityName;
+	private float lat;
+	private float lon;
 	private String countryCode;
+	private String countryName;
 	
-	public City(int cityId, String name, int lat, int lon, String countryCode)
+	private City(long cityId, String name, float lat, float lon, String countryCode, String countryName)
 	{
 		this.cityId = cityId;
-		this.name = name;
+		this.cityName = name;
 		this.lat = lat;
 		this.lon = lon;
 		this.countryCode = countryCode;
+		this.countryName = countryName;
 	}
-	
-	
 	
 	/**
 	 * Load cities from remote URL and parse them into objects
@@ -53,11 +59,62 @@ public class City
 		
 		try (Scanner in = new Scanner(citylistUrl.openStream()))
 		{
+			in.useDelimiter(CITYLIST_PATTERN);
 			cities.clear();
 			
 			in.nextLine(); // Discard header line
 			while (in.hasNext())
-				cities.add(new City(in.nextInt(), in.next(), in.nextInt(), in.nextInt(), in.next()));
+			{
+				try
+				{
+					long id = in.nextLong();
+					String cityName = in.next();
+					float lat = in.nextFloat();
+					float lon = in.nextFloat();
+					String countryCode = in.next();
+					String countryName = countryCodeNameMap.get(countryCode);
+					if (countryName != null)
+						cities.add(new City(id, cityName, lat, lon, countryCode, countryName));
+				}
+				catch (NoSuchElementException e) // On an invalid line, skip to end of line
+				{
+					in.nextLine();
+				}
+			}
+		}
+		catch (IOException e) // Failed to open file
+		{
+			throw new DataNotFoundException(e);
+		}
+		catch (NoSuchElementException e) // Handles unexpected "no more data"
+		{
+			if (cities.isEmpty()) // Completely invalid
+				throw new InvalidFormatException(e);
+			// Otherwise, it's just an invalid row like any other, we should return what we have
+		}
+	}
+	
+	/**
+	 * Loads the country code/name pairs from a specified URL
+	 */
+	private static void LoadCountries() throws MalformedURLException, DataNotFoundException, InvalidFormatException
+	{
+		if (!countryCodeNameMap.isEmpty())
+			return;
+		
+		URL countryCodeUrl = new URL(COUNTRYCODE_URL);
+		
+		try (Scanner in = new Scanner(countryCodeUrl.openStream()))
+		{
+			in.useDelimiter(COUNTRYCODE_PATTERN);
+			countryCodeNameMap.clear();
+			
+			while (in.hasNext())
+			{
+				String code = in.next();
+				String name = in.next();
+				countryCodeNameMap.put(code, name);
+			}
 		}
 		catch (IOException e) // Failed to open file
 		{
@@ -70,15 +127,18 @@ public class City
 		}
 	}
 	
-	public static void LoadCountries() throws MalformedURLException, DataNotFoundException, InvalidFormatException
+	/**
+	 * Returns an unmodifiable list of the Cities
+	 */
+	public static List<City> getCities()
 	{
-
+		return Collections.unmodifiableList(cities);
 	}
 	
 	/**
 	 * Returns the city ID used by OpenWeatherMap
 	 */
-	public int getCityId()
+	public long getCityId()
 	{
 		return cityId;
 	}
@@ -87,19 +147,19 @@ public class City
 	 */
 	public String getName()
 	{
-		return name;
+		return cityName;
 	}
 	/**
 	 * Returns the latitude of the city
 	 */
-	public int getLat()
+	public float getLat()
 	{
 		return lat;
 	}
 	/**
 	 * Returns the longitude of the city
 	 */
-	public int getLon()
+	public float getLon()
 	{
 		return lon;
 	}
@@ -110,5 +170,11 @@ public class City
 	{
 		return countryCode;
 	}
-	
+	/**
+	 * Returns the country's name in English
+	 */
+	public String getCountryName()
+	{
+		return countryName;
+	}
 }
