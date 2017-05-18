@@ -13,7 +13,9 @@ import net.aksingh.owmjapis.OpenWeatherMap.Units;
 
 // Yes, it looks like there's a lot of duplication in pulling weather data out of the API.
 // The problem is that there's a lot of duplication within the API itself, and no standard
-// or common superclass that provides everything.
+// or common superclass that provides everything. In particular, the Daily/HourlyForecast
+// classes provide the same data but through different interfaces, and their abstract
+// superclass doesn't actually provide any information about the weather. Wow....
 
 public class WeatherData
 {
@@ -46,8 +48,10 @@ public class WeatherData
 		hasTempRange = 	forecast.hasMainInstance() &&
 						forecast.getMainInstance().hasMinTemperature() &&
 						forecast.getMainInstance().hasMaxTemperature(); 
-		
+
+		// Hourly forecast has no rain data...
 		// hasRain = forecast.hasRainInstance() && forecast.getRainInstance().hasRain1h();
+		hasRain = false;
 		hasWind = forecast.hasWindInstance() && forecast.getWindInstance().hasWindSpeed();
 		
 		if (hasDateTime)
@@ -63,9 +67,6 @@ public class WeatherData
 			tempMax = forecast.getMainInstance().getMaxTemperature();
 		}
 		
-		// Welp. Looks like the hourly forecast doesn't support rain levels? Really?
-		//if (hasRain)
-		//	rain = 
 
 		if (hasWind)
 			wind = forecast.getWindInstance().getWindSpeed();
@@ -103,7 +104,7 @@ public class WeatherData
 		// TODO: weather type
 	}
 	
-
+	
 	public static List<WeatherData> getDailyForecast(City city, Unit units) throws InvalidFormatException
 	{
 		try
@@ -207,5 +208,14 @@ public class WeatherData
 	public WeatherType getWeatherType()
 	{
 		return weatherType;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Time: " + dateTime.toString() + "\t" +
+				"Temperature: " + temp + "\t" +
+				"Rain: " + rain + "\t" +
+				"Wind: " + wind + "\t";
 	}
 }
