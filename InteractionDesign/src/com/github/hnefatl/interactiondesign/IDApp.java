@@ -1,9 +1,13 @@
 package com.github.hnefatl.interactiondesign;
 
+import java.util.Locale;
+
 import com.github.hnefatl.interactiondesign.ui.IDMainFrame;
 
 public class IDApp
 {
+	private Locale defaultLocale;
+	
 	private IDMainFrame mainFrame;
 	
 	private IDBackground background;
@@ -13,6 +17,13 @@ public class IDApp
 	
 	public IDApp()
 	{
+		this(null);
+	}
+	
+	public IDApp(Locale defaultLocale)
+	{
+		this.defaultLocale = defaultLocale;
+		
 		background = new IDBackground();
 		modalBackground = new IDModalBackground(e -> {
 			mainFrame.clearModal();
@@ -20,7 +31,7 @@ public class IDApp
 		
 		mainFrame = new IDMainFrame(background.getRaw(), modalBackground.getRaw());
 		
-		mainScreen = new IDMainScreen();
+		mainScreen = new IDMainScreen(this.defaultLocale);
 		
 		mainFrame.setFrame(mainScreen.getRaw());
 	}

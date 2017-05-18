@@ -3,6 +3,7 @@ package com.github.hnefatl.interactiondesign;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.github.hnefatl.interactiondesign.data.City;
@@ -28,6 +29,8 @@ public class IDMainScreen
 	private static final IDLocation dfLocation = new IDLocation(dfOffset, dfSize);
 	private static final double dfScale = 3.0;
 	
+	private Locale defaultLocale;
+	
 	private IDFrame mainFrame;
 	
 	private IDScrollFrame scrollFrame;
@@ -37,6 +40,13 @@ public class IDMainScreen
 	
 	public IDMainScreen()
 	{
+		this(null);
+	}
+	
+	public IDMainScreen(Locale defaultLocale)
+	{
+		this.defaultLocale = defaultLocale;
+		
 		cityOrder = new ArrayList<City>();
 		cityData = new HashMap<City, IDCityFrame>();
 		
@@ -56,7 +66,7 @@ public class IDMainScreen
 		}
 		
 		cityOrder.add(city);
-		cityData.put(city, new IDCityFrame(city));
+		cityData.put(city, new IDCityFrame(city, defaultLocale));
 		
 		updateScrollFrame();
 		
