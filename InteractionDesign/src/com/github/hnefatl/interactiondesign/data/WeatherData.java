@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.json.JSONException;
 
-import net.aksingh.owmjapis.*;
-import net.aksingh.owmjapis.DailyForecast.Forecast;
-import net.aksingh.owmjapis.OpenWeatherMap.Language;
+import net.aksingh.owmjapis.DailyForecast;
+import net.aksingh.owmjapis.HourlyForecast;
+import net.aksingh.owmjapis.OpenWeatherMap;
 import net.aksingh.owmjapis.OpenWeatherMap.Units;
 
 // Yes, it looks like there's a lot of duplication in pulling weather data out of the API.

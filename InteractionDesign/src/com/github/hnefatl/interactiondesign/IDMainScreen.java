@@ -1,11 +1,16 @@
 package com.github.hnefatl.interactiondesign;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.github.hnefatl.interactiondesign.data.City;
 import com.github.hnefatl.interactiondesign.ui.IDAction;
 import com.github.hnefatl.interactiondesign.ui.IDButton;
 import com.github.hnefatl.interactiondesign.ui.IDColour;
 import com.github.hnefatl.interactiondesign.ui.IDEvent;
 import com.github.hnefatl.interactiondesign.ui.IDFrame;
-import com.github.hnefatl.interactiondesign.ui.IDGradientRectangle;
 import com.github.hnefatl.interactiondesign.ui.IDLocation;
 import com.github.hnefatl.interactiondesign.ui.IDLocationFrame;
 import com.github.hnefatl.interactiondesign.ui.IDPosition;
@@ -15,7 +20,6 @@ import com.github.hnefatl.interactiondesign.ui.IDSize;
 import com.github.hnefatl.interactiondesign.ui.IDString;
 import com.github.hnefatl.interactiondesign.ui.IDSubFrame;
 
-@SuppressWarnings("unused")
 public class IDMainScreen
 {
 	private static final IDPosition dfOffset = new IDPosition(0, 20);
@@ -28,19 +32,86 @@ public class IDMainScreen
 	
 	private IDScrollFrame scrollFrame;
 	
+	private List<City> cityOrder;
+	private Map<City, IDCityFrame> cityData;
+	
 	public IDMainScreen()
 	{
+		cityOrder = new ArrayList<City>();
+		cityData = new HashMap<City, IDCityFrame>();
+		
 		mainFrame = createFrame();
+	}
+	
+	/**
+	 * @param city City to add to data
+	 * @return If city was successfully added
+	 */
+	
+	public boolean addCity(City city)
+	{
+		if ((city == null) || cityOrder.contains(city))
+		{
+			return false;
+		}
+		
+		cityOrder.add(city);
+		cityData.put(city, new IDCityFrame(city));
+		
+		updateScrollFrame();
+		
+		return true;
+	}
+	
+	/**
+	 * @param city City to remove from data
+	 * @return If city was successfully removed
+	 */
+	
+	public boolean removeCity(City city)
+	{
+		if ((city == null) || !cityOrder.contains(city))
+		{
+			return false;
+		}
+		
+		cityOrder.remove(city);
+		cityData.remove(city);
+		
+		updateScrollFrame();
+		
+		return true;
+	}
+	
+	private void updateScrollFrame()
+	{
+		IDPosition previousPosition = scrollFrame.getPosition();
+		
+		scrollFrame.clear();
+		
+		int i = 0;
+		
+		for (i = 0; i < cityOrder.size(); i++)
+		{
+			City city = cityOrder.get(i);
+			IDCityFrame cityFrame = cityData.get(city);
+			
+			scrollFrame.addComponent(cityFrame.get(), new IDLocation(new IDPosition(0, 504 * i), new IDSize(1242, 504)));
+		}
+		
+		scrollFrame.setPosition(previousPosition);
+		
+		mainFrame.repaint();
 	}
 	
 	private IDFrame createFrame()
 	{
 		IDFrame rootFrame = new IDFrame(new IDLocationFrame(dfLocation, dfScale));
 		
-		scrollFrame = constructScrollFrame();
+		scrollFrame = new IDScrollFrame();
 		
 		rootFrame.addComponent(constructMenuBar(), new IDLocation(IDPosition.ZERO, new IDSize(1242, 132)));
-		rootFrame.addComponent(constructScrollFrame(), new IDLocation(new IDPosition(0, 132), new IDSize(1242, 2016)));
+		rootFrame.addComponent(scrollFrame, new IDLocation(new IDPosition(0, 132), new IDSize(1242, 2016)));
 		
 		return rootFrame;
 	}
@@ -64,19 +135,12 @@ public class IDMainScreen
 				System.out.println("TODO: Add new");
 				
 				//mainFrame.setModal(constructDefaultModal());
+				
+				addCity(new City(1, "London", 51.5074f, 0.1278f, "GB", "England"));
 			}
 		}), new IDLocation(new IDPosition(1242 - (24 + 132), 0), new IDSize(132, 132)));
 		
 		return menuBar;
-	}
-	
-	private IDScrollFrame constructScrollFrame()
-	{
-		IDScrollFrame sFrame = new IDScrollFrame();
-		
-		sFrame.addComponent(new IDGradientRectangle(new IDColour(0xFF, 0xFF, 0xFF), new IDColour(0xC8, 0xA2, 0xC8)), new IDLocation(IDPosition.ZERO, new IDSize(1242, 4000)));
-		
-		return sFrame;
 	}
 	
 	public IDFrame getRaw()

@@ -72,6 +72,11 @@ public class IDScrollFrame extends IDComponent
 				int dx = e.getX() - cursorPosition.x;
 				int dy = e.getY() - cursorPosition.y;
 				
+				if ((dx == 0) && (dy == 0))
+				{
+					return;
+				}
+				
 				currentPosition.x -= (dx * sensitivity);
 				currentPosition.y -= (dy * sensitivity);
 				
@@ -130,6 +135,39 @@ public class IDScrollFrame extends IDComponent
 		repaint();
 	}
 	
+	public void clear()
+	{
+		clear(true);
+	}
+	
+	public void clear(boolean setDirty)
+	{
+		for (IDComponent component : components.keySet())
+		{
+			pane.remove(component.getRaw());
+		}
+		
+		components.clear();
+		
+		if (setDirty)
+		{
+			recalculateBounds();
+			repaint();
+		}
+	}
+	
+	public IDPosition getPosition()
+	{
+		return currentPosition;
+	}
+	
+	public void setPosition(IDPosition position)
+	{
+		currentPosition = position;
+		
+		repaint();
+	}
+	
 	protected void recalculateBounds()
 	{
 		Double tMinX = null;
@@ -165,9 +203,9 @@ public class IDScrollFrame extends IDComponent
 				double tempMaxY = tempMinY + lSize.y;
 				
 				tMinX = (tempMinX < tMinX) ? tempMinX : tMinX;
-				tMinY = (tempMinY < tMinX) ? tempMinY : tMinY;
-				tMaxX = (tempMaxX < tMinX) ? tempMaxX : tMaxX;
-				tMaxY = (tempMaxY < tMinX) ? tempMaxY : tMaxY;
+				tMinY = (tempMinY < tMinY) ? tempMinY : tMinY;
+				tMaxX = (tempMaxX > tMaxX) ? tempMaxX : tMaxX;
+				tMaxY = (tempMaxY > tMaxY) ? tempMaxY : tMaxY;
 			}
 		}
 		

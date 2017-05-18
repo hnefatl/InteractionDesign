@@ -159,4 +159,9 @@ public class IDMainFrame
 		
 		lPane.repaint(); // For some reason removing a panel doesn't trigger a redraw, so do it manually
 	}
+	
+	public void repaint()
+	{
+		lPane.repaint();
+	}
 }

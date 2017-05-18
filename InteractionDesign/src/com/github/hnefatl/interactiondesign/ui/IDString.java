@@ -49,7 +49,7 @@ public class IDString
 		return getDefaultFont().deriveFont(style);
 	}
 	
-	public static Font getDefaultFont(int style, double size)
+	public static Font getDefaultFont(double size, int style)
 	{
 		return getDefaultFont().deriveFont(style, (float) size);
 	}

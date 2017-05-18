@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -34,7 +33,7 @@ public class City
 	private String countryCode;
 	private String countryName;
 	
-	private City(long cityId, String name, float lat, float lon, String countryCode, String countryName)
+	public City(long cityId, String name, float lat, float lon, String countryCode, String countryName)
 	{
 		this.cityId = cityId;
 		this.cityName = name;

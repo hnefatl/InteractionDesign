@@ -5,10 +5,18 @@ import javax.swing.JComponent;
 public class IDSubFrame extends IDComponent
 {
 	private IDFrame frame;
+	private IDLocationFrame ownFrame;
 	
 	public IDSubFrame()
 	{
+		this(null);
+	}
+	
+	public IDSubFrame(IDLocationFrame ownFrame)
+	{
 		frame = new IDFrame();
+		
+		this.ownFrame = ownFrame;
 	}
 	
 	public IDFrame get()
@@ -23,6 +31,15 @@ public class IDSubFrame extends IDComponent
 	
 	public void repaint(IDLocationFrame frame)
 	{
-		this.frame.repaint(frame);
+		if (ownFrame != null)
+		{
+			ownFrame.setParent(frame);
+			this.frame.repaint(ownFrame);
+		}
+		
+		else
+		{
+			this.frame.repaint(frame);
+		}
 	}
 }
