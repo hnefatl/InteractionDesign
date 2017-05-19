@@ -40,7 +40,7 @@ public class IDCityFrame
 		frame.get().addComponent(constructWeatherIcon(), new IDLocation(new IDPosition(74, 174), new IDSize(284, 284)));
 		
 		frame.get().addComponent(new IDText(new IDString(city.getCountryName(), IDString.getDefaultFont(16.0, IDString.BOLD)), white), new IDLocation(new IDPosition(54, 24), new IDSize(1242, 72)));
-		frame.get().addComponent(new IDText(new IDString(city.getName(), IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(54, 24 + 72), new IDSize(1242, 60)));
+		frame.get().addComponent(new IDText(new IDString(city.getCityName(), IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(54, 24 + 72), new IDSize(1242, 60)));
 		
 		frame.get().addComponent(constructInfoSubFrame(), new IDLocation(new IDPosition(523, 152), new IDSize(680, 300)));
 	}

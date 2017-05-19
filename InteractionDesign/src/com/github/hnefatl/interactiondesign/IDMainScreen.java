@@ -146,7 +146,17 @@ public class IDMainScreen
 				
 				//mainFrame.setModal(constructDefaultModal());
 				
-				addCity(new City(1, "London", 51.5074f, 0.1278f, "GB", "England"));
+				try
+				{
+					addCity(City.getCity(51.5074, 0.1278));
+				}
+				
+				catch (Exception ex)
+				{
+					// TODO: error modal
+					
+					ex.printStackTrace();
+				}
 			}
 		}), new IDLocation(new IDPosition(1242 - (24 + 132), 0), new IDSize(132, 132)));
 		
