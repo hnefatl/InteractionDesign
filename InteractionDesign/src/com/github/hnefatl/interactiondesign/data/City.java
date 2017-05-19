@@ -1,17 +1,6 @@
 package com.github.hnefatl.interactiondesign.data;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.function.Predicate;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
