@@ -13,6 +13,7 @@ import com.google.maps.model.LatLng;
 
 public class City
 {
+	// API key for the Google Geocoding API (registered under Keith's account)
 	private static final String GOOGLE_API_KEY = "AIzaSyAYSQffkovQev2FudqSKLVkhelDmycilkw";
 	
 	private String cityName;
@@ -31,7 +32,7 @@ public class City
 	/**
 	 * Returns the city closest to the given coordinates 
 	 */
-	public static City getCity(double lat, double lon) throws DataNotFoundException, InvalidFormatException
+	public static City getCity(double lat, double lon) throws DataNotFoundException, InvalidFormatException, CityNotFoundException
 	{
 		try
 		{
@@ -63,7 +64,7 @@ public class City
 			}
 			
 			// Invalid format as the city/country couldn't be found
-			throw new InvalidFormatException();
+			throw new CityNotFoundException();
 		}
 		catch (IOException|InterruptedException e)
 		{

@@ -25,8 +25,13 @@ public class WeatherData
 	private Date dateTime; // Date/time that this data is for
 	
 	private double temp; // Temperature
+	private String tempUnits; // Units of the temperature
+	
 	private double rain; // Rain volume
+	private String rainUnits;
+	
 	private double wind; // Wind speed
+	private String windUnits;
 	
 	private WeatherType weatherType; // "Friendly" weather type - cloudy, sunny etc.
 	
@@ -43,6 +48,8 @@ public class WeatherData
 			for (DailyDataPoint d : forecast.getDaily().getData())
 			{
 				WeatherData data = new WeatherData();
+				data.setUnits(forecast.getFlags().getUnits());
+				
 				data.dateTime = Date.from(d.getTime());
 				data.rain = d.getPrecipIntensity();
 				data.temp = (d.getTemperatureMin() + d.getTemperatureMax()) / 2; // Average the temperatures
@@ -65,12 +72,14 @@ public class WeatherData
 	{
 		try
 		{
-			Forecast forecast = getForecast(city);
+			Forecast forecast = getForecast(city);			
 			List<WeatherData> weathers = new ArrayList<>();
 			
 			for (DataPoint d : forecast.getHourly().getData())
 			{
 				WeatherData data = new WeatherData();
+				data.setUnits(forecast.getFlags().getUnits());
+				
 				data.dateTime = Date.from(d.getTime());
 				data.rain = d.getPrecipIntensity();
 				data.temp = d.getTemperature();
@@ -104,6 +113,28 @@ public class WeatherData
 			throw new DataNotFoundException(e);
 		}
 	}
+	private void setUnits(String forecastUnits)
+	{
+		// Pulled from https://github.com/200Puls/darksky-forecast-api/blob/master/darksky-forecast-api/src/main/java/tk/plogitech/darksky/forecast/ForecastRequestBuilder.java
+		if (	forecastUnits.equals("si") || forecastUnits.equals("auto") ||
+				forecastUnits.equals("ca") || forecastUnits.equals("uk2"))
+		{
+			tempUnits = "°C";
+			rainUnits = "mm/hr";
+			windUnits = "m/s";
+		}
+		if (forecastUnits.equals("ca"))
+			windUnits = "km/h";
+		if (forecastUnits.equals("uk2"))
+			windUnits = "mph";
+		
+		if (forecastUnits.equals("us"))
+		{
+			tempUnits = "°F";
+			rainUnits = "in/hr";
+			windUnits = "mph";
+		}
+	}
 	
 	/**
 	 * Gets the date and time of the prediction
@@ -120,34 +151,61 @@ public class WeatherData
 	{
 		return temp;
 	}
-	
 	/**
-	 * Returns the predicted volume of rain, in mm
+	 * Return the country's unit for temperature
 	 */
-	public double getRainVolume()
+	public String getTemperatureUnits()
 	{
-		return rain;
+		return tempUnits;
 	}
 	
 	/**
-	 * Returns the predicted wind speed, in kph.
+	 * Returns the predicted rate of rainfall
+	 */
+	public double getRainRate()
+	{
+		return rain;
+	}
+	/**
+	 * Returns the country's unit for rain
+	 */
+	public String getRainUnits()
+	{
+		return rainUnits;
+	}
+	
+	/**
+	 * Returns the predicted wind speed
 	 */
 	public double getWindSpeed()
 	{
 		return wind;
 	}
+	/**
+	 * Returns the country's units for wind speed
+	 */
+	public String getWindUnits()
+	{
+		return windUnits;
+	}
 	
+	/**
+	 * Returns the "friendly" name for the weather, useful for icons
+	 */
 	public WeatherType getWeatherType()
 	{
 		return weatherType;
 	}
 	
+	/**
+	 * Returns a human-readable form of the information
+	 */
 	@Override
 	public String toString()
 	{
 		return "Time: " + dateTime.toString() + "\n" +
-				"Temperature: " + temp + "\n" +
-				"Rain: " + rain + "\n" +
-				"Wind: " + wind + "\n";
+				"Temperature: " + temp + tempUnits + "\n" +
+				"Rain: " + rain + rainUnits + "\n" +
+				"Wind: " + wind + windUnits + "\n";
 	}
 }
