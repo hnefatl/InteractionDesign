@@ -73,16 +73,11 @@ public class IDCityFrame
 		
 		try
 		{
-			List<WeatherData> hourlyForecast = WeatherData.getHourlyForecast(city, locale);
+			currentWeather = WeatherData.getCurrentWeather(city);
 			
-			if (hourlyForecast.size() != 0)
+			if (currentWeather != null)
 			{
-				currentWeather = hourlyForecast.get(0);
-				
-				if (currentWeather != null)
-				{
-					weatherType = currentWeather.getWeatherType();
-				}
+				weatherType = currentWeather.getWeatherType();
 			}
 		}
 		
