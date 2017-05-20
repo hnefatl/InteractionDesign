@@ -4,46 +4,105 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-
-// TODO: Need to add acknowledgement of the DarkSky API to the UI somewhere: https://darksky.net/dev/docs
-
-
+import tk.plogitech.darksky.api.jackson.DarkSkyJacksonClient;
+import tk.plogitech.darksky.forecast.APIKey;
+import tk.plogitech.darksky.forecast.ForecastException;
+import tk.plogitech.darksky.forecast.ForecastRequest;
+import tk.plogitech.darksky.forecast.ForecastRequestBuilder;
+import tk.plogitech.darksky.forecast.ForecastRequestBuilder.Units;
+import tk.plogitech.darksky.forecast.GeoCoordinates;
+import tk.plogitech.darksky.forecast.Latitude;
+import tk.plogitech.darksky.forecast.Longitude;
+import tk.plogitech.darksky.forecast.model.DailyDataPoint;
+import tk.plogitech.darksky.forecast.model.DataPoint;
+import tk.plogitech.darksky.forecast.model.Forecast;
 
 public class WeatherData
 {	
-	// DarkSky API key (again, Keith's account)
+	// DarkSky API key (Keith's account)
 	private static final String DARKSKYAPI_KEY = "72e7cccc115c7a89c3e770d139f2c0fd";
 	
-	// DarkSky API 
-	private static final String API_URL = "https://api.darksky.net/forecast/" + DARKSKYAPI_KEY + "/";
+	private Date dateTime; // Date/time that this data is for
 	
-	private boolean hasDateTime;
-	private Date dateTime;
+	private double temp; // Temperature
+	private double rain; // Rain volume
+	private double wind; // Wind speed
 	
-	private boolean hasTemp;
-	private float temp;
+	private WeatherType weatherType; // "Friendly" weather type - cloudy, sunny etc.
 	
-	private boolean hasTempRange;
-	private float tempMin;
-	private float tempMax;
-	
-	private boolean hasRain;
-	private float rain;
-	
-	private boolean hasWind;
-	private float wind;
-	
-	private WeatherType weatherType;
-
-	
-	public static List<WeatherData> getDailyForecast(City city, Unit units) throws InvalidFormatException
+	/**
+	 * Returns a list of daily forecasts for the next week, starting with today.
+	 */
+	public static List<WeatherData> getDailyForecast(City city) throws DataNotFoundException
 	{
-		return null;
+		try
+		{
+			Forecast forecast = getForecast(city);
+			List<WeatherData> weathers = new ArrayList<>();
+			
+			for (DailyDataPoint d : forecast.getDaily().getData())
+			{
+				WeatherData data = new WeatherData();
+				data.dateTime = Date.from(d.getTime());
+				data.rain = d.getPrecipIntensity();
+				data.temp = (d.getTemperatureMin() + d.getTemperatureMax()) / 2; // Average the temperatures
+				data.wind = d.getWindSpeed();
+				data.weatherType = WeatherType.parse(d.getIcon());
+				weathers.add(data);
+			}
+			
+			return weathers;
+		}
+		catch (NullPointerException e)
+		{
+			throw new DataNotFoundException(e);
+		}
 	}
-	public static List<WeatherData> getHourlyForecast(City city, Unit units) throws InvalidFormatException
+	/**
+	 * Returns a list of hourly forecasts for the next 48 hours.
+	 */
+	public static List<WeatherData> getHourlyForecast(City city) throws DataNotFoundException
 	{
-		return null;
+		try
+		{
+			Forecast forecast = getForecast(city);
+			List<WeatherData> weathers = new ArrayList<>();
+			
+			for (DataPoint d : forecast.getHourly().getData())
+			{
+				WeatherData data = new WeatherData();
+				data.dateTime = Date.from(d.getTime());
+				data.rain = d.getPrecipIntensity();
+				data.temp = d.getTemperature();
+				data.wind = d.getWindSpeed();
+				data.weatherType = WeatherType.parse(d.getIcon());
+				weathers.add(data);
+			}
+			
+			return weathers;
+		}
+		catch (NullPointerException e)
+		{
+			throw new DataNotFoundException(e);
+		}
+	}
+	private static Forecast getForecast(City city) throws DataNotFoundException
+	{
+		try
+		{
+			ForecastRequest req = new ForecastRequestBuilder()
+										.key(new APIKey(DARKSKYAPI_KEY))
+										.units(Units.auto)
+										.location(new GeoCoordinates(new Longitude(city.getLon()), new Latitude(city.getLat())))
+										.build();
+			
+			DarkSkyJacksonClient client = new DarkSkyJacksonClient();
+			return client.forecast(req);
+		}
+		catch (ForecastException e)
+		{
+			throw new DataNotFoundException(e);
+		}
 	}
 	
 	/**
@@ -55,45 +114,26 @@ public class WeatherData
 	}
 	
 	/**
-	 * Returns the predicted temperature, in degrees Celsius
+	 * Returns the predicted temperature
 	 */
-	public float getTemperature() throws DataNotFoundException
+	public double getTemperature()
 	{
-		if (!hasTemp)
-			throw new DataNotFoundException();
 		return temp;
-	}
-
-	public float getTemperatureMin() throws DataNotFoundException
-	{
-		if (!hasTempRange)
-			throw new DataNotFoundException();
-		return tempMin;
-	}
-	public float getTemperatureMax() throws DataNotFoundException
-	{
-		if (!hasTempRange)
-			throw new DataNotFoundException();
-		return tempMax;
 	}
 	
 	/**
 	 * Returns the predicted volume of rain, in mm
 	 */
-	public float getRainVolume() throws DataNotFoundException
+	public double getRainVolume()
 	{
-		if (!hasRain)
-			throw new DataNotFoundException();
 		return rain;
 	}
 	
 	/**
 	 * Returns the predicted wind speed, in kph.
 	 */
-	public float getWindSpeed() throws DataNotFoundException
+	public double getWindSpeed()
 	{
-		if (!hasWind)
-			throw new DataNotFoundException();
 		return wind;
 	}
 	
@@ -105,9 +145,9 @@ public class WeatherData
 	@Override
 	public String toString()
 	{
-		return "Time: " + dateTime.toString() + "\t" +
-				"Temperature: " + temp + "\t" +
-				"Rain: " + rain + "\t" +
-				"Wind: " + wind + "\t";
+		return "Time: " + dateTime.toString() + "\n" +
+				"Temperature: " + temp + "\n" +
+				"Rain: " + rain + "\n" +
+				"Wind: " + wind + "\n";
 	}
 }
