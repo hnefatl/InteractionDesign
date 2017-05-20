@@ -3,6 +3,7 @@ package com.github.hnefatl.interactiondesign.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import tk.plogitech.darksky.api.jackson.DarkSkyJacksonClient;
 import tk.plogitech.darksky.forecast.APIKey;
@@ -40,9 +41,17 @@ public class WeatherData
 	 */
 	public static List<WeatherData> getDailyForecast(City city) throws DataNotFoundException
 	{
+		return getDailyForecast(city, null);
+	}
+	
+	/**
+	 * Returns a list of daily forecasts for the next week, starting with today, getting units specific for the given locale
+	 */
+	public static List<WeatherData> getDailyForecast(City city, Locale unitLocale) throws DataNotFoundException
+	{
 		try
 		{
-			Forecast forecast = getForecast(city);
+			Forecast forecast = getForecast(city, unitLocale);
 			List<WeatherData> weathers = new ArrayList<>();
 			
 			for (DailyDataPoint d : forecast.getDaily().getData())
@@ -66,13 +75,20 @@ public class WeatherData
 		}
 	}
 	/**
-	 * Returns a list of hourly forecasts for the next 48 hours.
+	 * Returns a list of hourly forecasts for the next 48 hours
 	 */
 	public static List<WeatherData> getHourlyForecast(City city) throws DataNotFoundException
 	{
+		return getHourlyForecast(city, null);
+	}
+	/**
+	 * Returns a list of hourly forecasts for the next 48 hours, getting units specific for the given locale
+	 */
+	public static List<WeatherData> getHourlyForecast(City city, Locale unitLocale) throws DataNotFoundException
+	{
 		try
 		{
-			Forecast forecast = getForecast(city);			
+			Forecast forecast = getForecast(city, unitLocale);			
 			List<WeatherData> weathers = new ArrayList<>();
 			
 			for (DataPoint d : forecast.getHourly().getData())
@@ -95,13 +111,27 @@ public class WeatherData
 			throw new DataNotFoundException(e);
 		}
 	}
-	private static Forecast getForecast(City city) throws DataNotFoundException
+	private static Forecast getForecast(City city, Locale locale) throws DataNotFoundException
 	{
 		try
 		{
+			Units units;
+			if (locale == null)
+				units = Units.auto;
+			else
+			{
+				if (locale == Locale.CANADA)
+					units = Units.ca;
+				else if (locale == Locale.UK)
+					units = Units.uk2;
+				else if (locale == Locale.US)
+					units = Units.us;
+				else
+					units = Units.si;
+			}
 			ForecastRequest req = new ForecastRequestBuilder()
 										.key(new APIKey(DARKSKYAPI_KEY))
-										.units(Units.auto)
+										.units(units)
 										.location(new GeoCoordinates(new Longitude(city.getLon()), new Latitude(city.getLat())))
 										.build();
 			
