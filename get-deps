@@ -1,0 +1,13 @@
+Maven:
+mvn org.apache.maven.plugins:maven-dependency-plugin:3.0.1:copy-dependencies -DoutputDirectory=jars/ -Dartifact=tk.plogitech:darksky-forecast-api-jackson:0.10
+
+Copies all dependencies for a given artifact to the output directory.
+
+
+gradle:
+In build.gradle:
+
+task getDeps(type: Copy) {
+  	from sourceSets.main.runtimeClasspath
+	into 'libs/'
+}
