@@ -41,7 +41,7 @@ public class City
 			
 			GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(lat, lon)).await();
 			
-			// Look at each result, pull out the postal town one
+			// Look at each result, pull out the locality
 			for (GeocodingResult r : results)
 			{
 				if (contains(r.types, AddressType.LOCALITY))
@@ -63,14 +63,14 @@ public class City
 				}
 			}
 			
-			// Invalid format as the city/country couldn't be found
+			// City couldn't be found
 			throw new CityNotFoundException();
 		}
-		catch (IOException|InterruptedException e)
+		catch (IOException|InterruptedException e) // Network error
 		{
 			throw new DataNotFoundException(e);
 		}
-		catch (ApiException e)
+		catch (ApiException e) // Returned data was invalid
 		{
 			throw new InvalidFormatException(e);
 		}

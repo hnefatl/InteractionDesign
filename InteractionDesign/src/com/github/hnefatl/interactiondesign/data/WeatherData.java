@@ -206,6 +206,7 @@ public class WeatherData
 		return "Time: " + dateTime.toString() + "\n" +
 				"Temperature: " + temp + tempUnits + "\n" +
 				"Rain: " + rain + rainUnits + "\n" +
-				"Wind: " + wind + windUnits + "\n";
+				"Wind: " + wind + windUnits + "\n" +
+				"General: " + weatherType;
 	}
 }
