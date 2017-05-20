@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/*
 import tk.plogitech.darksky.api.jackson.DarkSkyJacksonClient;
 import tk.plogitech.darksky.forecast.APIKey;
 import tk.plogitech.darksky.forecast.ForecastException;
@@ -16,6 +17,7 @@ import tk.plogitech.darksky.forecast.Longitude;
 import tk.plogitech.darksky.forecast.model.DailyDataPoint;
 import tk.plogitech.darksky.forecast.model.DataPoint;
 import tk.plogitech.darksky.forecast.model.Forecast;
+*/
 
 public class WeatherData
 {	
@@ -37,9 +39,10 @@ public class WeatherData
 	{
 		try
 		{
-			Forecast forecast = getForecast(city);
+			//Forecast forecast = getForecast(city);
 			List<WeatherData> weathers = new ArrayList<>();
 			
+			/*
 			for (DailyDataPoint d : forecast.getDaily().getData())
 			{
 				WeatherData data = new WeatherData();
@@ -50,6 +53,7 @@ public class WeatherData
 				data.weatherType = WeatherType.parse(d.getIcon());
 				weathers.add(data);
 			}
+			*/
 			
 			return weathers;
 		}
@@ -65,9 +69,10 @@ public class WeatherData
 	{
 		try
 		{
-			Forecast forecast = getForecast(city);
+			//Forecast forecast = getForecast(city);
 			List<WeatherData> weathers = new ArrayList<>();
 			
+			/*
 			for (DataPoint d : forecast.getHourly().getData())
 			{
 				WeatherData data = new WeatherData();
@@ -78,6 +83,7 @@ public class WeatherData
 				data.weatherType = WeatherType.parse(d.getIcon());
 				weathers.add(data);
 			}
+			*/
 			
 			return weathers;
 		}
@@ -86,6 +92,8 @@ public class WeatherData
 			throw new DataNotFoundException(e);
 		}
 	}
+	
+	/*
 	private static Forecast getForecast(City city) throws DataNotFoundException
 	{
 		try
@@ -104,6 +112,7 @@ public class WeatherData
 			throw new DataNotFoundException(e);
 		}
 	}
+	*/
 	
 	/**
 	 * Gets the date and time of the prediction

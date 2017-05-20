@@ -1,9 +1,11 @@
 package com.github.hnefatl.interactiondesign;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
 import com.github.hnefatl.interactiondesign.data.City;
+import com.github.hnefatl.interactiondesign.data.WeatherData;
 import com.github.hnefatl.interactiondesign.ui.IDAction;
 import com.github.hnefatl.interactiondesign.ui.IDButton;
 import com.github.hnefatl.interactiondesign.ui.IDColour;
@@ -64,10 +66,37 @@ public class IDCityFrame
 		infoFrame.get().addComponent(new IDText(new IDString(IDLocaleManager.get("ui.rain_chance", locale), IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(0, 162), new IDSize(1242, 60)));
 		infoFrame.get().addComponent(new IDText(new IDString(IDLocaleManager.get("ui.wind_speed", locale), IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(0, 243), new IDSize(1242, 60)));
 		
-		infoFrame.get().addComponent(new IDText(new IDString("10°", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540, 0), new IDSize(1242, 60)));
-		infoFrame.get().addComponent(new IDText(new IDString("10°", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540, 81), new IDSize(1242, 60)));
-		infoFrame.get().addComponent(new IDText(new IDString("22%", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540, 162), new IDSize(1242, 60)));
-		infoFrame.get().addComponent(new IDText(new IDString("2 mph", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540, 243), new IDSize(1242, 60)));
+		double temperature = 10;
+		double feelsLike = 10;
+		double rainChance = 22;
+		double windSpeed = 2;
+		
+		try
+		{
+			List<WeatherData> hourlyForecast = WeatherData.getHourlyForecast(city);
+			
+			if (hourlyForecast.size() != 0)
+			{
+				WeatherData data = WeatherData.getHourlyForecast(city).get(0);
+				
+				temperature = data.getTemperature();
+				feelsLike = data.getTemperature();
+				rainChance = data.getRainVolume();
+				windSpeed = data.getWindSpeed();
+			}
+		}
+		
+		catch (Exception e)
+		{
+			// TODO: Error modal
+			
+			e.printStackTrace();
+		}
+		
+		infoFrame.get().addComponent(new IDText(new IDString(temperature + "°", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 0), new IDSize(1242, 60)));
+		infoFrame.get().addComponent(new IDText(new IDString(feelsLike + "°", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 81), new IDSize(1242, 60)));
+		infoFrame.get().addComponent(new IDText(new IDString(rainChance + "%", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 162), new IDSize(1242, 60)));
+		infoFrame.get().addComponent(new IDText(new IDString(windSpeed + " kph", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 243), new IDSize(1242, 60)));
 		
 		return infoFrame;
 	}
