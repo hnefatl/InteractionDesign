@@ -25,11 +25,14 @@ public class WeatherData
 	
 	private Date dateTime; // Date/time that this data is for
 	
-	private double temp; // Temperature
+	private double temp; // Actual temperature
+	private double apparentTemp; // "Feels-like" temperature
 	private String tempUnits; // Units of the temperature
-	
+
 	private double rain; // Rain volume
 	private String rainUnits;
+	
+	private double rainChance;	 // Percentage likelihood of rain
 	
 	private double wind; // Wind speed
 	private String windUnits;
@@ -60,8 +63,10 @@ public class WeatherData
 				data.setUnits(forecast.getFlags().getUnits());
 				
 				data.dateTime = Date.from(d.getTime());
-				data.rain = d.getPrecipIntensity();
 				data.temp = (d.getTemperatureMin() + d.getTemperatureMax()) / 2; // Average the temperatures
+				data.apparentTemp = (d.getApparentTemperatureMin() + d.getApparentTemperatureMax()) / 2;
+				data.rain = d.getPrecipIntensity();
+				data.rainChance = d.getPrecipProbability();
 				data.wind = d.getWindSpeed();
 				data.weatherType = WeatherType.parse(d.getIcon());
 				weathers.add(data);
@@ -97,8 +102,10 @@ public class WeatherData
 				data.setUnits(forecast.getFlags().getUnits());
 				
 				data.dateTime = Date.from(d.getTime());
-				data.rain = d.getPrecipIntensity();
 				data.temp = d.getTemperature();
+				data.apparentTemp = d.getApparentTemperature();
+				data.rain = d.getPrecipIntensity();
+				data.rainChance = d.getPrecipProbability();
 				data.wind = d.getWindSpeed();
 				data.weatherType = WeatherType.parse(d.getIcon());
 				weathers.add(data);
@@ -182,6 +189,13 @@ public class WeatherData
 		return temp;
 	}
 	/**
+	 * Returns the predicted "feels-like" temperature
+	 */
+	public double getApparentTemperature()
+	{
+		return apparentTemp;
+	}
+	/**
 	 * Return the country's unit for temperature
 	 */
 	public String getTemperatureUnits()
@@ -202,6 +216,21 @@ public class WeatherData
 	public String getRainUnits()
 	{
 		return rainUnits;
+	}
+	
+	/**
+	 * Returns the predicted likelihood of rainfall
+	 */
+	public double getRainChance()
+	{
+		return rainChance * 100;
+	}
+	/**
+	 * Returns the country's unit for rain chance
+	 */
+	public String getRainChanceUnits()
+	{
+		return "%";
 	}
 	
 	/**
@@ -233,10 +262,12 @@ public class WeatherData
 	@Override
 	public String toString()
 	{
-		return "Time: " + dateTime.toString() + "\n" +
-				"Temperature: " + temp + tempUnits + "\n" +
-				"Rain: " + rain + rainUnits + "\n" +
-				"Wind: " + wind + windUnits + "\n" +
-				"General: " + weatherType;
+		return "Time:\t\t\t" + dateTime.toString() + "\n" +
+				"True Temperature:\t" + temp + tempUnits + "\n" +
+				"Apparent Temperature:\t" + apparentTemp + tempUnits + "\n" +
+				"Rain Rate:\t\t" + rain + rainUnits + "\n" +
+				"Rain Chance:\t\t" + rainChance * 100 + getRainChanceUnits() + "\n" +
+				"Wind:\t\t\t" + wind + windUnits + "\n" +
+				"General:\t\t" + weatherType;
 	}
 }
