@@ -3,14 +3,17 @@ package com.github.hnefatl.interactiondesign;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 import com.github.hnefatl.interactiondesign.data.City;
+import com.github.hnefatl.interactiondesign.data.DataNotFoundException;
 import com.github.hnefatl.interactiondesign.data.WeatherData;
+import com.github.hnefatl.interactiondesign.data.WeatherType;
 import com.github.hnefatl.interactiondesign.ui.IDAction;
 import com.github.hnefatl.interactiondesign.ui.IDButton;
 import com.github.hnefatl.interactiondesign.ui.IDColour;
 import com.github.hnefatl.interactiondesign.ui.IDEvent;
+import com.github.hnefatl.interactiondesign.ui.IDIcon;
+import com.github.hnefatl.interactiondesign.ui.IDImage;
 import com.github.hnefatl.interactiondesign.ui.IDLocation;
 import com.github.hnefatl.interactiondesign.ui.IDLocationFrame;
 import com.github.hnefatl.interactiondesign.ui.IDPosition;
@@ -20,15 +23,40 @@ import com.github.hnefatl.interactiondesign.ui.IDString;
 import com.github.hnefatl.interactiondesign.ui.IDSubFrame;
 import com.github.hnefatl.interactiondesign.ui.IDText;
 
-@SuppressWarnings("unused")
 public class IDCityFrame
 {
 	private static IDColour white = new IDColour(0xFF, 0xFF, 0xFF);
 	
+	private static IDColour clearDayColour = new IDColour(0x87, 0xCE, 0xFA);
+	private static IDColour clearNightColour = new IDColour(0x25, 0x30, 0x4F);
+	private static IDColour rainColour = new IDColour(0x34, 0x34, 0x34);
+	private static IDColour snowColour = rainColour;
+	private static IDColour sleetColour = rainColour;
+	private static IDColour windColour = new IDColour(0x92, 0x92, 0x92);
+	private static IDColour fogColour = windColour;
+	private static IDColour cloudyColour = new IDColour(0x53, 0x53, 0x53);
+	private static IDColour partlyCloudyDayColour = clearDayColour;
+	private static IDColour partlyCloudyNightColour = clearNightColour;
+	
+	private static IDImage clearDayImage = new IDImage("resources/icons/IDIcons_Sun.png");
+	private static IDImage clearNightImage = new IDImage("resources/icons/IDIcons_Moon.png");
+	private static IDImage rainImage = new IDImage("resources/icons/IDIcons_Rain.png");
+	private static IDImage snowImage = new IDImage("resources/icons/IDIcons_Snow.png");
+	private static IDImage sleetImage = new IDImage("resources/icons/IDIcons_Sleet.png");
+	private static IDImage windImage = new IDImage("resources/icons/IDIcons_Wind.png");
+	private static IDImage fogImage = new IDImage("resources/icons/IDIcons_Fog.png");
+	private static IDImage cloudyImage = new IDImage("resources/icons/IDIcons_Cloud.png");
+	private static IDImage partlyCloudyDayImage = new IDImage("resources/icons/IDIcons_PartialSun.png");
+	private static IDImage partlyCloudyNightImage = new IDImage("resources/icons/IDIcons_PartialMoon.png");
+	
+	@SuppressWarnings("unused")
 	private City city;
 	private Locale locale;
 	
 	private IDSubFrame frame;
+	
+	private WeatherData currentWeather;
+	private WeatherType weatherType;
 	
 	public IDCityFrame(IDMainScreen mainScreen, City city)
 	{
@@ -40,6 +68,31 @@ public class IDCityFrame
 		this.city = city;
 		this.locale = locale;
 		
+		currentWeather = null;
+		weatherType = WeatherType.UNKNOWN;
+		
+		try
+		{
+			List<WeatherData> hourlyForecast = WeatherData.getHourlyForecast(city, locale);
+			
+			if (hourlyForecast.size() != 0)
+			{
+				currentWeather = hourlyForecast.get(0);
+				
+				if (currentWeather != null)
+				{
+					weatherType = currentWeather.getWeatherType();
+				}
+			}
+		}
+		
+		catch (DataNotFoundException e)
+		{
+			// TODO: Error modal
+			
+			e.printStackTrace();
+		}
+		
 		frame = new IDSubFrame(new IDLocationFrame(new IDLocation(IDPosition.ZERO, new IDSize(1242, 504))));
 		
 		frame.get().addComponent(new IDButton(new IDAction() {
@@ -47,10 +100,16 @@ public class IDCityFrame
 			{
 				mainScreen.showCityInfo(city);
 			}
-		}, false), new IDLocation(IDPosition.ZERO, new IDSize(1242, 504)));
+		}, false), new IDLocation(new IDPosition(74, 174), new IDSize(284, 284)));
 		
 		frame.get().addComponent(constructWeatherBackground(), new IDLocation(IDPosition.ZERO, new IDSize(1242, 504)));
-		frame.get().addComponent(constructWeatherIcon(), new IDLocation(new IDPosition(74, 174), new IDSize(284, 284)));
+		
+		IDIcon weatherIcon = constructWeatherIcon();
+		
+		if (weatherIcon != null)
+		{
+			frame.get().addComponent(weatherIcon, new IDLocation(new IDPosition(74, 174), new IDSize(284, 284)));
+		}
 		
 		frame.get().addComponent(new IDText(new IDString(city.getCountryName(), IDString.getDefaultFont(16.0, IDString.BOLD)), white), new IDLocation(new IDPosition(54, 24), new IDSize(1242, 72)));
 		frame.get().addComponent(new IDText(new IDString(city.getCityName(), IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(54, 24 + 72), new IDSize(1242, 60)));
@@ -72,28 +131,14 @@ public class IDCityFrame
 		String rainChance = "N/A";
 		String windSpeed = "N/A";
 		
-		try
+		if (currentWeather != null)
 		{
-			List<WeatherData> hourlyForecast = WeatherData.getHourlyForecast(city);
+			DecimalFormat dFormat = new DecimalFormat("#,##0");
 			
-			if (hourlyForecast.size() != 0)
-			{
-				WeatherData data = WeatherData.getHourlyForecast(city).get(0);
-				
-				DecimalFormat dFormat = new DecimalFormat("#,##0.0");
-				
-				temperature = dFormat.format(data.getTemperature()) + data.getTemperatureUnits();
-				feelsLike = dFormat.format(data.getTemperature()) + data.getTemperatureUnits();
-				rainChance = dFormat.format(data.getRainRate()) + "%";
-				windSpeed = dFormat.format(data.getWindSpeed()) + " " + data.getWindUnits();
-			}
-		}
-		
-		catch (Exception e)
-		{
-			// TODO: Error modal
-			
-			e.printStackTrace();
+			temperature = dFormat.format(currentWeather.getTemperature()) + " " + currentWeather.getTemperatureUnits();
+			feelsLike = dFormat.format(currentWeather.getApparentTemperature()) + " " + currentWeather.getTemperatureUnits();
+			rainChance = dFormat.format(currentWeather.getRainChance()) + " " + currentWeather.getRainChanceUnits();
+			windSpeed = dFormat.format(currentWeather.getWindSpeed()) + " " + currentWeather.getWindUnits();
 		}
 		
 		infoFrame.get().addComponent(new IDText(new IDString(temperature, IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 0), new IDSize(1242, 60)));
@@ -106,14 +151,111 @@ public class IDCityFrame
 	
 	private IDRectangle constructWeatherBackground()
 	{
-		Random r = new Random();
+		IDColour weatherColour = null;
 		
-		return new IDRectangle(new IDColour(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+		switch (weatherType)
+		{
+		case CLEAR_DAY:
+			weatherColour = clearDayColour;
+			break;
+			
+		case CLEAR_NIGHT:
+			weatherColour = clearNightColour;
+			break;
+			
+		case RAIN:
+			weatherColour = rainColour;
+			break;
+			
+		case SNOW:
+			weatherColour = snowColour;
+			break;
+			
+		case SLEET:
+			weatherColour = sleetColour;
+			break;
+			
+		case WIND:
+			weatherColour = windColour;
+			break;
+			
+		case FOG:
+			weatherColour = fogColour;
+			break;
+			
+		case CLOUDY:
+			weatherColour = cloudyColour;
+			break;
+			
+		case PARTLY_CLOUDY_DAY:
+			weatherColour = partlyCloudyDayColour;
+			break;
+			
+		case PARTLY_CLOUDY_NIGHT:
+			weatherColour = partlyCloudyNightColour;
+			break;
+			
+		default:
+			weatherColour = new IDColour(0xC2, 0xA8, 0xC2);
+		}
+		
+		return new IDRectangle(weatherColour);
 	}
 	
-	private IDRectangle constructWeatherIcon()
+	private IDIcon constructWeatherIcon()
 	{
-		return new IDRectangle(new IDColour(0xC2, 0xA8, 0xC2));
+		IDIcon weatherIcon = null;
+		
+		switch (weatherType)
+		{
+		case CLEAR_DAY:
+			weatherIcon = new IDIcon(clearDayImage);
+			break;
+			
+		case CLEAR_NIGHT:
+			weatherIcon = new IDIcon(clearNightImage);
+			break;
+			
+		case RAIN:
+			weatherIcon = new IDIcon(rainImage);
+			break;
+			
+		case SNOW:
+			weatherIcon = new IDIcon(snowImage);
+			break;
+			
+		case SLEET:
+			weatherIcon = new IDIcon(sleetImage);
+			break;
+			
+		case WIND:
+			weatherIcon = new IDIcon(windImage);
+			break;
+			
+		case FOG:
+			weatherIcon = new IDIcon(fogImage);
+			break;
+			
+		case CLOUDY:
+			weatherIcon = new IDIcon(cloudyImage);
+			break;
+			
+		case PARTLY_CLOUDY_DAY:
+			weatherIcon = new IDIcon(partlyCloudyDayImage);
+			break;
+			
+		case PARTLY_CLOUDY_NIGHT:
+			weatherIcon = new IDIcon(partlyCloudyNightImage);
+			break;
+			
+		default:
+			// TODO: Maybe use question mark image?
+			
+			weatherIcon = null;
+			break;
+		}
+		
+		return weatherIcon;
 	}
 	
 	public IDSubFrame get()

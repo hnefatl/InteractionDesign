@@ -2,14 +2,16 @@ package com.github.hnefatl.interactiondesign.data;
 
 public enum WeatherType
 {
-	CLEAR,
+	CLEAR_DAY,
+	CLEAR_NIGHT,
 	RAIN,
 	SNOW,
 	SLEET,
 	WIND,
 	FOG,
 	CLOUDY,
-	PARTLY_CLOUDY,
+	PARTLY_CLOUDY_DAY,
+	PARTLY_CLOUDY_NIGHT,
 	UNKNOWN;
 	
 	public static WeatherType parse(String text)
@@ -19,8 +21,9 @@ public enum WeatherType
 		
 		switch (text)
 		{
-		case "clear-day":
-		case "clear-night": 		return CLEAR;
+		case "clear-day":			return CLEAR_DAY;
+		
+		case "clear-night": 		return CLEAR_NIGHT;
 		
 		case "rain":				return RAIN;
 		
@@ -34,8 +37,9 @@ public enum WeatherType
 		
 		case "cloudy":				return CLOUDY;
 		
-		case "partly-cloudy-day":
-		case "partly-cloudy-night":	return PARTLY_CLOUDY;
+		case "partly-cloudy-day":	return PARTLY_CLOUDY_DAY;
+		
+		case "partly-cloudy-night":	return PARTLY_CLOUDY_NIGHT;
 		}
 		
 		return UNKNOWN;

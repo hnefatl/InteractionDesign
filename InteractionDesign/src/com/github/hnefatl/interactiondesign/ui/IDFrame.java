@@ -53,6 +53,11 @@ public class IDFrame
 	
 	public void addComponent(IDComponent component, IDLocation location)
 	{
+		if (component.getRaw() == null)
+		{
+			return;
+		}
+		
 		IDLocationFrame lFrame = new IDLocationFrame(location);
 		lFrame.setParent(frame);
 		
@@ -66,6 +71,11 @@ public class IDFrame
 	
 	public void removeComponent(IDComponent component)
 	{
+		if (component.getRaw() == null)
+		{
+			return;
+		}
+		
 		pane.remove(component.getRaw());
 		components.remove(component);
 	}

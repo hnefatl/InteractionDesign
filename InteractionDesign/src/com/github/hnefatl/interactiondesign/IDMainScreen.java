@@ -27,7 +27,7 @@ public class IDMainScreen
 	private static final IDSize dfSize = new IDSize(1242, 2148);
 	
 	private static final IDLocation dfLocation = new IDLocation(dfOffset, dfSize);
-	private static final double dfScale = 3.0;
+	public static final double dfScale = 3.0;
 	
 	private Locale defaultLocale;
 	
@@ -173,7 +173,15 @@ public class IDMainScreen
 				
 				try
 				{
-					addCity(City.getCity(51.5074, 0.1278));
+					if (cityOrder.size() == 0)
+					{
+						addCity(City.getCity(52.2053, 0.1218));
+					}
+					
+					else
+					{
+						addCity(City.getCity(51.5074, 0.1278));
+					}
 				}
 				
 				catch (Exception ex)
