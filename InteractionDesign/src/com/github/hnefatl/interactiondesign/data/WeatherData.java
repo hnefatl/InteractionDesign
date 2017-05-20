@@ -118,6 +118,39 @@ public class WeatherData
 			throw new DataNotFoundException(e);
 		}
 	}
+	/**
+	 * Gets the current weather in the given city
+	 */
+	public static WeatherData getCurrentWeather(City city) throws DataNotFoundException
+	{
+		return getCurrentWeather(city, null);
+	}
+	/**
+	 * Gets the current weather in the given city, getting units specific for the given locale
+	 */
+	public static WeatherData getCurrentWeather(City city, Locale unitLocale) throws DataNotFoundException
+	{
+		try
+		{
+			Forecast forecast = getForecast(city, unitLocale);			
+			WeatherData data = new WeatherData();
+			data.setUnits(forecast.getFlags().getUnits());
+			
+			data.dateTime = Date.from(forecast.getCurrently().getTime());
+			data.temp = forecast.getCurrently().getTemperature();
+			data.apparentTemp = forecast.getCurrently().getApparentTemperature();
+			data.rain = forecast.getCurrently().getPrecipIntensity();
+			data.rainChance = forecast.getCurrently().getPrecipProbability();
+			data.wind = forecast.getCurrently().getWindSpeed();
+			data.weatherType = WeatherType.parse(forecast.getCurrently().getIcon());
+		
+			return data;
+		}
+		catch (NullPointerException e)
+		{
+			throw new DataNotFoundException(e);
+		}
+	}	
 	private static Forecast getForecast(City city, Locale locale) throws DataNotFoundException
 	{
 		try
