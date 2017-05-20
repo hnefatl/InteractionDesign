@@ -1,5 +1,6 @@
 package com.github.hnefatl.interactiondesign;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -66,10 +67,10 @@ public class IDCityFrame
 		infoFrame.get().addComponent(new IDText(new IDString(IDLocaleManager.get("ui.rain_chance", locale), IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(0, 162), new IDSize(1242, 60)));
 		infoFrame.get().addComponent(new IDText(new IDString(IDLocaleManager.get("ui.wind_speed", locale), IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(0, 243), new IDSize(1242, 60)));
 		
-		double temperature = 10;
-		double feelsLike = 10;
-		double rainChance = 22;
-		double windSpeed = 2;
+		String temperature = "N/A";
+		String feelsLike = "N/A";
+		String rainChance = "N/A";
+		String windSpeed = "N/A";
 		
 		try
 		{
@@ -79,10 +80,12 @@ public class IDCityFrame
 			{
 				WeatherData data = WeatherData.getHourlyForecast(city).get(0);
 				
-				temperature = data.getTemperature();
-				feelsLike = data.getTemperature();
-				rainChance = data.getRainVolume();
-				windSpeed = data.getWindSpeed();
+				DecimalFormat dFormat = new DecimalFormat("#,##0.0");
+				
+				temperature = dFormat.format(data.getTemperature()) + data.getTemperatureUnits();
+				feelsLike = dFormat.format(data.getTemperature()) + data.getTemperatureUnits();
+				rainChance = dFormat.format(data.getRainRate()) + "%";
+				windSpeed = dFormat.format(data.getWindSpeed()) + " " + data.getWindUnits();
 			}
 		}
 		
@@ -93,10 +96,10 @@ public class IDCityFrame
 			e.printStackTrace();
 		}
 		
-		infoFrame.get().addComponent(new IDText(new IDString(temperature + "°", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 0), new IDSize(1242, 60)));
-		infoFrame.get().addComponent(new IDText(new IDString(feelsLike + "°", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 81), new IDSize(1242, 60)));
-		infoFrame.get().addComponent(new IDText(new IDString(rainChance + "%", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 162), new IDSize(1242, 60)));
-		infoFrame.get().addComponent(new IDText(new IDString(windSpeed + " kph", IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 243), new IDSize(1242, 60)));
+		infoFrame.get().addComponent(new IDText(new IDString(temperature, IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 0), new IDSize(1242, 60)));
+		infoFrame.get().addComponent(new IDText(new IDString(feelsLike, IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 81), new IDSize(1242, 60)));
+		infoFrame.get().addComponent(new IDText(new IDString(rainChance, IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 162), new IDSize(1242, 60)));
+		infoFrame.get().addComponent(new IDText(new IDString(windSpeed, IDString.getDefaultFont(15.0)), white), new IDLocation(new IDPosition(540 - 45, 243), new IDSize(1242, 60)));
 		
 		return infoFrame;
 	}
