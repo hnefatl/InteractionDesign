@@ -4,7 +4,10 @@ import java.util.Locale;
 import java.util.Random;
 
 import com.github.hnefatl.interactiondesign.data.City;
+import com.github.hnefatl.interactiondesign.ui.IDAction;
+import com.github.hnefatl.interactiondesign.ui.IDButton;
 import com.github.hnefatl.interactiondesign.ui.IDColour;
+import com.github.hnefatl.interactiondesign.ui.IDEvent;
 import com.github.hnefatl.interactiondesign.ui.IDLocation;
 import com.github.hnefatl.interactiondesign.ui.IDLocationFrame;
 import com.github.hnefatl.interactiondesign.ui.IDPosition;
@@ -24,17 +27,24 @@ public class IDCityFrame
 	
 	private IDSubFrame frame;
 	
-	public IDCityFrame(City city)
+	public IDCityFrame(IDMainScreen mainScreen, City city)
 	{
-		this(city, null);
+		this(mainScreen, city, null);
 	}
 	
-	public IDCityFrame(City city, Locale locale)
+	public IDCityFrame(IDMainScreen mainScreen, City city, Locale locale)
 	{
 		this.city = city;
 		this.locale = locale;
 		
 		frame = new IDSubFrame(new IDLocationFrame(new IDLocation(IDPosition.ZERO, new IDSize(1242, 504))));
+		
+		frame.get().addComponent(new IDButton(new IDAction() {
+			public void onAction(IDEvent e)
+			{
+				mainScreen.showCityInfo(city);
+			}
+		}, false), new IDLocation(IDPosition.ZERO, new IDSize(1242, 504)));
 		
 		frame.get().addComponent(constructWeatherBackground(), new IDLocation(IDPosition.ZERO, new IDSize(1242, 504)));
 		frame.get().addComponent(constructWeatherIcon(), new IDLocation(new IDPosition(74, 174), new IDSize(284, 284)));

@@ -8,7 +8,8 @@ public class InteractionDesign
 	public static void main(String[] args)
 	{
 		IDLocaleManager.loadLocale(Locale.ENGLISH, ResourceBundle.getBundle("IDResources", Locale.ENGLISH));
+		IDLocaleManager.loadLocale(Locale.FRENCH, ResourceBundle.getBundle("IDResources", Locale.FRANCE));
 		
-		new IDApp();
+		new IDApp(Locale.FRENCH);
 	}
 }

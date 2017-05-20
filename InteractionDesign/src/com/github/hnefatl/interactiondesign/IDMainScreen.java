@@ -31,6 +31,8 @@ public class IDMainScreen
 	
 	private Locale defaultLocale;
 	
+	private IDApp app;
+	
 	private IDFrame mainFrame;
 	
 	private IDScrollFrame scrollFrame;
@@ -38,13 +40,14 @@ public class IDMainScreen
 	private List<City> cityOrder;
 	private Map<City, IDCityFrame> cityData;
 	
-	public IDMainScreen()
+	public IDMainScreen(IDApp app)
 	{
-		this(null);
+		this(app, null);
 	}
 	
-	public IDMainScreen(Locale defaultLocale)
+	public IDMainScreen(IDApp app, Locale defaultLocale)
 	{
+		this.app = app;
 		this.defaultLocale = defaultLocale;
 		
 		cityOrder = new ArrayList<City>();
@@ -66,7 +69,7 @@ public class IDMainScreen
 		}
 		
 		cityOrder.add(city);
-		cityData.put(city, new IDCityFrame(city, defaultLocale));
+		cityData.put(city, new IDCityFrame(this, city, defaultLocale));
 		
 		updateScrollFrame();
 		
@@ -91,6 +94,28 @@ public class IDMainScreen
 		updateScrollFrame();
 		
 		return true;
+	}
+	
+	public void showCityInfo(City city)
+	{
+		app.showModal(constructCityModal(city));
+	}
+	
+	private IDFrame constructCityModal(City city)
+	{
+		IDFrame modalFrame = new IDFrame(new IDLocationFrame(dfLocation, dfScale));
+		
+		IDSubFrame subFrame = new IDSubFrame();
+		
+		subFrame.get().addComponent(new IDRectangle(new IDColour(1.0, 1.0, 1.0)), new IDLocation(IDPosition.ZERO, new IDSize(1242, 1104)));
+		subFrame.get().addComponent(new IDButton(false), new IDLocation(IDPosition.ZERO, new IDSize(1242, 1104)));
+		
+		subFrame.get().addComponent(new IDRectangle(new IDColour(0.2, 0.2, 0.2)), new IDLocation(new IDPosition(60, 60), new IDSize(1122, 732))); // TODO: Graph
+		subFrame.get().addComponent(new IDRectangle(new IDColour(1.0, 1.0, 1.0)), new IDLocation(new IDPosition(63, 63), new IDSize(1122 - 6, 732 - 6)));
+		
+		modalFrame.addComponent(subFrame, new IDLocation(new IDPosition(0, 552 - 30), new IDSize(1242, 1104)));
+		
+		return modalFrame;
 	}
 	
 	private void updateScrollFrame()

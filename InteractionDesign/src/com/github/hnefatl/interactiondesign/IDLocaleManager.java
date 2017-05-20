@@ -28,6 +28,8 @@ public class IDLocaleManager
 		if (bundle == null)
 		{
 			bundle = localeMap.get(Locale.ENGLISH);
+			
+			System.out.println("Locale missing!");
 		}
 		
 		if (bundle == null)

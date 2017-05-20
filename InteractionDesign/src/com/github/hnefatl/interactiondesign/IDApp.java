@@ -2,6 +2,7 @@ package com.github.hnefatl.interactiondesign;
 
 import java.util.Locale;
 
+import com.github.hnefatl.interactiondesign.ui.IDFrame;
 import com.github.hnefatl.interactiondesign.ui.IDMainFrame;
 
 public class IDApp
@@ -31,21 +32,13 @@ public class IDApp
 		
 		mainFrame = new IDMainFrame(background.getRaw(), modalBackground.getRaw());
 		
-		mainScreen = new IDMainScreen(this.defaultLocale);
+		mainScreen = new IDMainScreen(this, this.defaultLocale);
 		
 		mainFrame.setFrame(mainScreen.getRaw());
 	}
 	
-	/*
-	//@SuppressWarnings("unused")
-	private IDFrame constructDefaultModal()
+	public void showModal(IDFrame modalFrame)
 	{
-		IDFrame modalFrame = new IDFrame(new IDLocationFrame(dfLocation, dfScale));
-		
-		modalFrame.addComponent(new IDRectangle(new IDColour(1.0, 1.0, 1.0)), new IDLocation(new IDPosition(0, 574), new IDSize(1242, 1000)));
-		modalFrame.addComponent(new IDButton(false), new IDLocation(new IDPosition(0, 574), new IDSize(1242, 1000)));
-		
-		return modalFrame;
+		mainFrame.setModal(modalFrame);
 	}
-	*/
 }
