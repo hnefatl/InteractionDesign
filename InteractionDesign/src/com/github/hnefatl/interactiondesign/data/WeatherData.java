@@ -17,12 +17,6 @@ import tk.plogitech.darksky.forecast.model.DailyDataPoint;
 import tk.plogitech.darksky.forecast.model.DataPoint;
 import tk.plogitech.darksky.forecast.model.Forecast;
 
-
-
-// TODO: Need to add acknowledgement of the DarkSky API to the UI somewhere: https://darksky.net/dev/docs
-
-
-
 public class WeatherData
 {	
 	// DarkSky API key (Keith's account)
