@@ -3,6 +3,7 @@ package com.github.hnefatl.interactiondesign.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import tk.plogitech.darksky.api.jackson.DarkSkyJacksonClient;
 import tk.plogitech.darksky.forecast.APIKey;
@@ -24,11 +25,14 @@ public class WeatherData
 	
 	private Date dateTime; // Date/time that this data is for
 	
-	private double temp; // Temperature
+	private double temp; // Actual temperature
+	private double apparentTemp; // "Feels-like" temperature
 	private String tempUnits; // Units of the temperature
-	
+
 	private double rain; // Rain volume
 	private String rainUnits;
+	
+	private double rainChance;	 // Percentage likelihood of rain
 	
 	private double wind; // Wind speed
 	private String windUnits;
@@ -40,9 +44,17 @@ public class WeatherData
 	 */
 	public static List<WeatherData> getDailyForecast(City city) throws DataNotFoundException
 	{
+		return getDailyForecast(city, null);
+	}
+	
+	/**
+	 * Returns a list of daily forecasts for the next week, starting with today, getting units specific for the given locale
+	 */
+	public static List<WeatherData> getDailyForecast(City city, Locale unitLocale) throws DataNotFoundException
+	{
 		try
 		{
-			Forecast forecast = getForecast(city);
+			Forecast forecast = getForecast(city, unitLocale);
 			List<WeatherData> weathers = new ArrayList<>();
 			
 			for (DailyDataPoint d : forecast.getDaily().getData())
@@ -51,8 +63,10 @@ public class WeatherData
 				data.setUnits(forecast.getFlags().getUnits());
 				
 				data.dateTime = Date.from(d.getTime());
-				data.rain = d.getPrecipIntensity();
 				data.temp = (d.getTemperatureMin() + d.getTemperatureMax()) / 2; // Average the temperatures
+				data.apparentTemp = (d.getApparentTemperatureMin() + d.getApparentTemperatureMax()) / 2;
+				data.rain = d.getPrecipIntensity();
+				data.rainChance = d.getPrecipProbability();
 				data.wind = d.getWindSpeed();
 				data.weatherType = WeatherType.parse(d.getIcon());
 				weathers.add(data);
@@ -66,13 +80,20 @@ public class WeatherData
 		}
 	}
 	/**
-	 * Returns a list of hourly forecasts for the next 48 hours.
+	 * Returns a list of hourly forecasts for the next 48 hours
 	 */
 	public static List<WeatherData> getHourlyForecast(City city) throws DataNotFoundException
 	{
+		return getHourlyForecast(city, null);
+	}
+	/**
+	 * Returns a list of hourly forecasts for the next 48 hours, getting units specific for the given locale
+	 */
+	public static List<WeatherData> getHourlyForecast(City city, Locale unitLocale) throws DataNotFoundException
+	{
 		try
 		{
-			Forecast forecast = getForecast(city);			
+			Forecast forecast = getForecast(city, unitLocale);			
 			List<WeatherData> weathers = new ArrayList<>();
 			
 			for (DataPoint d : forecast.getHourly().getData())
@@ -81,8 +102,10 @@ public class WeatherData
 				data.setUnits(forecast.getFlags().getUnits());
 				
 				data.dateTime = Date.from(d.getTime());
-				data.rain = d.getPrecipIntensity();
 				data.temp = d.getTemperature();
+				data.apparentTemp = d.getApparentTemperature();
+				data.rain = d.getPrecipIntensity();
+				data.rainChance = d.getPrecipProbability();
 				data.wind = d.getWindSpeed();
 				data.weatherType = WeatherType.parse(d.getIcon());
 				weathers.add(data);
@@ -95,13 +118,27 @@ public class WeatherData
 			throw new DataNotFoundException(e);
 		}
 	}
-	private static Forecast getForecast(City city) throws DataNotFoundException
+	private static Forecast getForecast(City city, Locale locale) throws DataNotFoundException
 	{
 		try
 		{
+			Units units;
+			if (locale == null)
+				units = Units.auto;
+			else
+			{
+				if (locale == Locale.CANADA)
+					units = Units.ca;
+				else if (locale == Locale.UK)
+					units = Units.uk2;
+				else if (locale == Locale.US)
+					units = Units.us;
+				else
+					units = Units.si;
+			}
 			ForecastRequest req = new ForecastRequestBuilder()
 										.key(new APIKey(DARKSKYAPI_KEY))
-										.units(Units.auto)
+										.units(units)
 										.location(new GeoCoordinates(new Longitude(city.getLon()), new Latitude(city.getLat())))
 										.build();
 			
@@ -152,6 +189,13 @@ public class WeatherData
 		return temp;
 	}
 	/**
+	 * Returns the predicted "feels-like" temperature
+	 */
+	public double getApparentTemperature()
+	{
+		return apparentTemp;
+	}
+	/**
 	 * Return the country's unit for temperature
 	 */
 	public String getTemperatureUnits()
@@ -172,6 +216,21 @@ public class WeatherData
 	public String getRainUnits()
 	{
 		return rainUnits;
+	}
+	
+	/**
+	 * Returns the predicted likelihood of rainfall
+	 */
+	public double getRainChance()
+	{
+		return rainChance * 100;
+	}
+	/**
+	 * Returns the country's unit for rain chance
+	 */
+	public String getRainChanceUnits()
+	{
+		return "%";
 	}
 	
 	/**
@@ -203,10 +262,12 @@ public class WeatherData
 	@Override
 	public String toString()
 	{
-		return "Time: " + dateTime.toString() + "\n" +
-				"Temperature: " + temp + tempUnits + "\n" +
-				"Rain: " + rain + rainUnits + "\n" +
-				"Wind: " + wind + windUnits + "\n" +
-				"General: " + weatherType;
+		return "Time:\t\t\t" + dateTime.toString() + "\n" +
+				"True Temperature:\t" + temp + tempUnits + "\n" +
+				"Apparent Temperature:\t" + apparentTemp + tempUnits + "\n" +
+				"Rain Rate:\t\t" + rain + rainUnits + "\n" +
+				"Rain Chance:\t\t" + rainChance * 100 + getRainChanceUnits() + "\n" +
+				"Wind:\t\t\t" + wind + windUnits + "\n" +
+				"General:\t\t" + weatherType;
 	}
 }
