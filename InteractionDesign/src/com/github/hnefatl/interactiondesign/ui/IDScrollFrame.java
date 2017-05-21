@@ -31,6 +31,8 @@ public class IDScrollFrame extends IDComponent
 	
 	private Point cursorPosition;
 	
+	private IDAction clickAction;
+	
 	public IDScrollFrame()
 	{
 		this(null);
@@ -39,6 +41,7 @@ public class IDScrollFrame extends IDComponent
 	public IDScrollFrame(IDLocationFrame frame)
 	{
 		this.frame = frame;
+		clickAction = null;
 		
 		if (this.frame != null)
 		{
@@ -60,6 +63,20 @@ public class IDScrollFrame extends IDComponent
 			public void mousePressed(MouseEvent e)
 			{
 				cursorPosition = e.getPoint();
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e)
+			{
+				Point clickPoint = e.getPoint();
+				
+				double actualX = clickPoint.x + currentPosition.x;
+				double actualY = clickPoint.y + currentPosition.y;
+				
+				if (clickAction != null)
+				{
+					clickAction.onAction(new IDClickEvent(new IDPosition(actualX, actualY), e.getButton()));
+				}
 			}
 		});
 		
@@ -87,6 +104,8 @@ public class IDScrollFrame extends IDComponent
 			}
 		});
 		
+		dragPanel.setOpaque(false);
+		
 		pane.add(dragPanel, nextLayer);
 		nextLayer++;
 		
@@ -108,6 +127,11 @@ public class IDScrollFrame extends IDComponent
 	public IDLocationFrame getFrame()
 	{
 		return frame;
+	}
+	
+	public void addClickAction(IDAction clickAction)
+	{
+		this.clickAction = clickAction;
 	}
 	
 	public void addComponent(IDComponent component, IDLocation location)

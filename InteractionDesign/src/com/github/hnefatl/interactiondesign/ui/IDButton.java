@@ -171,9 +171,7 @@ public class IDButton extends IDComponent
 	{
 		if (pressAction != null)
 		{
-			// TODO: Use correct IDEvent
-			
-			pressAction.onAction(null);
+			pressAction.onAction(new IDClickEvent(null));
 		}
 	}
 }

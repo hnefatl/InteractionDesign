@@ -1,17 +1,13 @@
 package com.github.hnefatl.interactiondesign;
 
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.Locale;
 
 import com.github.hnefatl.interactiondesign.data.City;
 import com.github.hnefatl.interactiondesign.data.DataNotFoundException;
 import com.github.hnefatl.interactiondesign.data.WeatherData;
 import com.github.hnefatl.interactiondesign.data.WeatherType;
-import com.github.hnefatl.interactiondesign.ui.IDAction;
-import com.github.hnefatl.interactiondesign.ui.IDButton;
 import com.github.hnefatl.interactiondesign.ui.IDColour;
-import com.github.hnefatl.interactiondesign.ui.IDEvent;
 import com.github.hnefatl.interactiondesign.ui.IDIcon;
 import com.github.hnefatl.interactiondesign.ui.IDImage;
 import com.github.hnefatl.interactiondesign.ui.IDLocation;
@@ -49,7 +45,6 @@ public class IDCityFrame
 	private static IDImage partlyCloudyDayImage = new IDImage("resources/icons/IDIcons_PartialSun.png");
 	private static IDImage partlyCloudyNightImage = new IDImage("resources/icons/IDIcons_PartialMoon.png");
 	
-	@SuppressWarnings("unused")
 	private City city;
 	private Locale locale;
 	
@@ -73,7 +68,7 @@ public class IDCityFrame
 		
 		try
 		{
-			currentWeather = WeatherData.getCurrentWeather(city);
+			currentWeather = WeatherData.getCurrentWeather(this.city);
 			
 			if (currentWeather != null)
 			{
@@ -90,20 +85,13 @@ public class IDCityFrame
 		
 		frame = new IDSubFrame(new IDLocationFrame(new IDLocation(IDPosition.ZERO, new IDSize(1242, 504))));
 		
-		frame.get().addComponent(new IDButton(new IDAction() {
-			public void onAction(IDEvent e)
-			{
-				mainScreen.showCityInfo(city);
-			}
-		}, false), new IDLocation(new IDPosition(74, 174), new IDSize(284, 284)));
-		
 		frame.get().addComponent(constructWeatherBackground(), new IDLocation(IDPosition.ZERO, new IDSize(1242, 504)));
 		
 		IDIcon weatherIcon = constructWeatherIcon();
 		
 		if (weatherIcon != null)
 		{
-			frame.get().addComponent(weatherIcon, new IDLocation(new IDPosition(74, 174), new IDSize(284, 284)));
+			frame.get().addComponent(weatherIcon, new IDLocation(new IDPosition(74 + 30, 174 + 30), new IDSize(284 - 60, 284 - 60)));
 		}
 		
 		frame.get().addComponent(new IDText(new IDString(city.getCountryName(), IDString.getDefaultFont(16.0, IDString.BOLD)), white), new IDLocation(new IDPosition(54, 24), new IDSize(1242, 72)));

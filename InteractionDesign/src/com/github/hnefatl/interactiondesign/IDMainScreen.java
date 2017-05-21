@@ -9,6 +9,7 @@ import java.util.Map;
 import com.github.hnefatl.interactiondesign.data.City;
 import com.github.hnefatl.interactiondesign.ui.IDAction;
 import com.github.hnefatl.interactiondesign.ui.IDButton;
+import com.github.hnefatl.interactiondesign.ui.IDClickEvent;
 import com.github.hnefatl.interactiondesign.ui.IDColour;
 import com.github.hnefatl.interactiondesign.ui.IDEvent;
 import com.github.hnefatl.interactiondesign.ui.IDFrame;
@@ -135,6 +136,26 @@ public class IDMainScreen
 		}
 		
 		scrollFrame.setPosition(previousPosition);
+		
+		scrollFrame.addClickAction(new IDAction() {
+			public void onAction(IDEvent event)
+			{
+				if (event == null)
+				{
+					return;
+				}
+				
+				IDClickEvent e = (IDClickEvent) event;
+				IDPosition p = e.getPosition();
+				
+				int i = Math.floorDiv((int) p.y, 168);
+				
+				if (i < cityOrder.size())
+				{
+					showCityInfo(cityOrder.get(i));
+				}
+			}
+		});
 		
 		mainFrame.repaint();
 	}
