@@ -102,15 +102,15 @@ public class City
 	
 	private static City parse(GeocodingResult data) throws CityNotFoundException
 	{
-		if (contains(data.types, AddressType.LOCALITY))
-		{
+		//if (contains(data.types, AddressType.LOCALITY))
+		//{
 			String country = null;
 			String city = null;
 			
 			// Extract the town and country from the result
 			for (AddressComponent a : data.addressComponents)
 			{
-				if (contains(a.types, AddressComponentType.LOCALITY))
+				if (contains(a.types, AddressComponentType.LOCALITY) || contains(a.types, AddressComponentType.POSTAL_TOWN))
 					city = a.shortName;
 				if (contains(a.types, AddressComponentType.COUNTRY))
 					country = a.longName;
@@ -118,7 +118,7 @@ public class City
 			
 			if (city != null && country != null)
 				return new City(city, data.geometry.location.lat, data.geometry.location.lng, country);
-		}
+		//}
 		
 		throw new CityNotFoundException();
 	}
