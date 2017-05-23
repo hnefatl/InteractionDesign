@@ -7,7 +7,7 @@ mkdir -p bin/
 javac -d "bin/" -classpath "libs/*" $(find InteractionDesign | grep .java)
 
 # Copy over resources
-cp -r resources/* bin/
+cp -r InteractionDesign/resources/* bin/
 
 # Run
 java -cp "bin/:bin/libs/*" com.github.hnefatl.interactiondesign.InteractionDesign
