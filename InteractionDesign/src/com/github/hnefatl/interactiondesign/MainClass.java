@@ -15,7 +15,6 @@ import java.util.HashMap;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import org.geonames.*;
-import com.github.hnefatl.interactiondesign.GeoLookUp;
 import com.github.hnefatl.interactiondesign.data.City;
 
 import de.fhpotsdam.unfolding.geo.Location;
